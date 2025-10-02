@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { teamMembers } from '../../data/team';
+import type { TeamMember } from '../../data/team';
+import { socialIconMap } from '../../utils/socialIcons';
+
+export async function getStaticPaths() {
+  return teamMembers.map((member) => ({
+    params: { slug: member.slug },
+    props: { member }
+  }));
+}
+
+const { member } = Astro.props as { member: TeamMember };
+const pageTitle = `${member.name} – ${member.role}`;
+const description = `${member.shortBio} ${member.focus}`;
+---
+<BaseLayout title={pageTitle} description={description} canonical={`https://funteco.org/nosotras/${member.slug}`}>
+  <Header current="/about" />
+  <main class="bg-gradient-to-br from-neutral via-white to-accent-blush/30">
+    <section class="relative py-20">
+      <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-accent-flamingo/40 to-transparent"></div>
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="grid gap-10 lg:grid-cols-5 items-center">
+          <div class="lg:col-span-3 space-y-6">
+            <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary-dark">
+              Integrante de Funteco
+              <span class="inline-flex h-2 w-2 rounded-full bg-panafrican-red animate-pulse" aria-hidden="true"></span>
+            </span>
+            <div class="space-y-2">
+              <h1 class="text-4xl sm:text-5xl font-bold text-primary-dark leading-tight">{member.name}</h1>
+              <p class="text-base uppercase tracking-[0.4em] text-primary-dark/70">{member.role}</p>
+            </div>
+            <p class="text-lg text-neutral-black/80 leading-relaxed">{member.shortBio}</p>
+            <div class="rounded-3xl bg-white/90 border border-accent-blush/40 p-5 shadow-md">
+              <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-primary-dark/80">Enfoque</h2>
+              <p class="mt-2 text-sm text-primary-dark/90 leading-relaxed">{member.focus}</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              {member.expertise.map((area) => (
+                <span class="inline-flex items-center rounded-full bg-panafrican-green/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-panafrican-green">
+                  {area}
+                </span>
+              ))}
+            </div>
+            <div class="flex flex-wrap gap-3">
+              {member.socials.map((social) => (
+                <a
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary-dark transition hover:border-accent hover:bg-accent/10 hover:text-accent"
+                >
+                  {socialIconMap[social.platform] && (
+                    <span
+                      class="text-accent"
+                      aria-hidden="true"
+                      set:html={socialIconMap[social.platform]}
+                    ></span>
+                  )}
+                  <span>{social.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+          <div class="lg:col-span-2">
+            <div class="rounded-3xl overflow-hidden shadow-xl border-4 border-white/70">
+              <img src={member.image} alt={`Retrato de ${member.name}`} class="w-full h-full object-cover" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div class="space-y-6 text-base leading-relaxed text-neutral-black/80">
+          <h2 class="text-2xl font-semibold text-primary-dark">Biografía</h2>
+          {member.bio.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </div>
+        <div class="grid gap-8 lg:grid-cols-[minmax(0,_1.1fr)_minmax(0,_0.9fr)]">
+          <div class="rounded-3xl bg-white/90 border border-accent-blush/40 p-8 shadow-lg space-y-5">
+            <h3 class="text-xl font-semibold text-primary-dark">Cómo aporta al equipo</h3>
+            <ul class="space-y-3 text-sm text-neutral-black/80">
+              {member.highlights.map((item) => (
+                <li class="flex items-start gap-3">
+                  <span class="mt-1 inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="rounded-3xl bg-gradient-to-br from-primary-dark via-primary to-accent text-white p-8 shadow-xl space-y-5">
+            <h3 class="text-xl font-semibold">Conversemos</h3>
+            <p class="text-sm text-white/85 leading-relaxed">
+              ¿Quieres sumar a las redes de cuidado, investigación o creación comunitaria que lidera {member.name}? Escríbenos y construyamos juntas.
+            </p>
+            <a
+              href="/contacto"
+              class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-primary-dark shadow-md transition hover:bg-accent-flamingo hover:text-white"
+            >
+              Abrir formulario de contacto
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

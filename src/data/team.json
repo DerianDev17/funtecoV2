@@ -1,0 +1,138 @@
+[
+  {
+    "slug": "nieves-mendez-olaya",
+    "name": "Nieves Méndez Olaya",
+    "role": "Socia fundadora",
+    "image": "https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/funtecoNieves.png",
+    "shortBio": "Trabajadora social con dos décadas de acompañamiento a familias afrocolombianas y ecuatorianas en procesos de cuidado comunitario.",
+    "bio": [
+      "Nieves es trabajadora social y tejedora comunitaria. Durante los últimos veinte años ha acompañado a familias afrocolombianas y ecuatorianas que viven procesos de movilidad humana, priorizando la salud mental, el acceso a derechos y la construcción de redes de autocuidado colectivo.",
+      "Desde Funteco impulsa círculos de sanación, escuelas de formación en derechos humanos y metodologías participativas que fortalecen el liderazgo de mujeres cuidadoras. Cree en el poder de la escucha activa y la memoria para sostener la vida en comunidad."
+    ],
+    "focus": "Teje metodologías de cuidado y sanación colectiva.",
+    "expertise": [
+      "Acompañamiento psicosocial afro",
+      "Metodologías participativas de cuidado",
+      "Formación en derechos humanos"
+    ],
+    "highlights": [
+      "Facilitó más de 150 círculos de apoyo emocional para familias afro en Esmeraldas, Quito y Tulcán.",
+      "Coordinó la creación de la Red de Mujeres Cuidadoras Afro en la frontera norte de Ecuador.",
+      "Formó equipos comunitarios en primeros auxilios emocionales y protección integral para defensoras."
+    ],
+    "socials": [
+      {
+        "platform": "facebook",
+        "label": "Facebook de Nieves Méndez Olaya",
+        "url": "https://www.facebook.com/"
+      },
+      {
+        "platform": "instagram",
+        "label": "Instagram de Nieves Méndez Olaya",
+        "url": "https://www.instagram.com/"
+      }
+    ]
+  },
+  {
+    "slug": "diana-angulo-balanta",
+    "name": "Diana Angulo Balanta",
+    "role": "Socia fundadora",
+    "image": "https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/funtecoDiana.png",
+    "shortBio": "Comunicadora y gestora cultural afrocolombiana. Impulsa procesos de memoria y narrativas audiovisuales con juventudes afro.",
+    "bio": [
+      "Diana es comunicadora social y productora audiovisual. Ha trabajado con colectivos juveniles afro en Colombia y Ecuador para documentar historias de resistencia, migración y creatividad afrodescendiente a través de podcasts, documentales y performances urbanos.",
+      "Su práctica articula estrategias de comunicación popular con alianzas culturales. Desde Funteco dinamiza festivales comunitarios, laboratorios creativos y acompañamientos a liderazgos juveniles que usan la tecnología como herramienta de incidencia política."
+    ],
+    "focus": "Potencia la comunicación comunitaria y la memoria audiovisual afro.",
+    "expertise": [
+      "Narrativas audiovisuales comunitarias",
+      "Alianzas culturales y eventos",
+      "Comunicación popular con juventudes"
+    ],
+    "highlights": [
+      "Dirigió la serie documental \"Voces que Migran\" con relatos de juventudes afro en Quito y Esmeraldas.",
+      "Coordinó festivales comunitarios de memoria afro con más de 1.500 participantes en frontera norte.",
+      "Impulsó laboratorios digitales para que jóvenes afro cuenten historias desde el celular."
+    ],
+    "socials": [
+      {
+        "platform": "instagram",
+        "label": "Instagram de Diana Angulo Balanta",
+        "url": "https://www.instagram.com/"
+      },
+      {
+        "platform": "linkedin",
+        "label": "LinkedIn de Diana Angulo Balanta",
+        "url": "https://www.linkedin.com/"
+      }
+    ]
+  },
+  {
+    "slug": "elizabeth-mendez-grueso",
+    "name": "Elizabeth Méndez Grueso",
+    "role": "Socia fundadora",
+    "image": "https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/funtecoElizabeth.png",
+    "shortBio": "Economista popular que acompaña emprendimientos liderados por mujeres afro en Quito y Esmeraldas con enfoque solidario.",
+    "bio": [
+      "Elizabeth es economista popular y asesora en finanzas comunitarias. Acompaña emprendimientos liderados por mujeres afro, promoviendo modelos económicos solidarios que priorizan el bienestar colectivo y la redistribución justa del trabajo de cuidados.",
+      "Ha diseñado herramientas financieras accesibles, fondos rotatorios y escuelas de emprendimiento afro que fortalecen la autonomía económica de familias migrantes y rurales en Ecuador. Cree en la economía como un acto de ternura y justicia racial."
+    ],
+    "focus": "Fortalece economías del cuidado y emprendimientos afro.",
+    "expertise": [
+      "Finanzas solidarias accesibles",
+      "Emprendimientos afro liderados por mujeres",
+      "Economía feminista comunitaria"
+    ],
+    "highlights": [
+      "Acompañó a 80 emprendimientos afroecuatorianos a construir planes financieros con enfoque de cuidados.",
+      "Impulsó un fondo rotatorio comunitario que sostiene iniciativas lideradas por mujeres migrantes afro.",
+      "Co-creó la Escuela de Economía Feminista Afro para jóvenes emprendedoras en Quito."
+    ],
+    "socials": [
+      {
+        "platform": "instagram",
+        "label": "Instagram de Elizabeth Méndez Grueso",
+        "url": "https://www.instagram.com/"
+      },
+      {
+        "platform": "facebook",
+        "label": "Facebook de Elizabeth Méndez Grueso",
+        "url": "https://www.facebook.com/"
+      }
+    ]
+  },
+  {
+    "slug": "francia-jenny-moreno",
+    "name": "Francia Jenny Moreno",
+    "role": "Coordinadora de proyectos",
+    "image": "https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/funtecoFrancia.png",
+    "shortBio": "Ingeniera en desarrollo local con experiencia en gestión de fondos y programas con enfoque interseccional en Ecuador.",
+    "bio": [
+      "Francia es ingeniera en desarrollo local y gestora de proyectos sociales con enfoque interseccional. Ha coordinado iniciativas de justicia racial, movilidad humana y prevención de violencias en alianza con organizaciones comunitarias e instituciones públicas.",
+      "Desde Funteco acompaña equipos territoriales, procesos de evaluación participativa y diseño de indicadores de impacto que visibilizan las realidades afro en Ecuador. Sostiene espacios de planificación colaborativa que priorizan la sostenibilidad y el cuidado."
+    ],
+    "focus": "Gestiona proyectos con enfoque interseccional y territorial.",
+    "expertise": [
+      "Gestión de proyectos con justicia racial",
+      "Evaluación participativa e impacto comunitario",
+      "Articulación de alianzas territoriales"
+    ],
+    "highlights": [
+      "Gestionó programas de justicia racial financiados por cooperantes internacionales durante más de 8 años.",
+      "Implementó sistemas de monitoreo comunitario para iniciativas de prevención de violencias de género.",
+      "Fortaleció alianzas entre organizaciones afro y gobiernos locales en Esmeraldas y Quito."
+    ],
+    "socials": [
+      {
+        "platform": "linkedin",
+        "label": "LinkedIn de Francia Jenny Moreno",
+        "url": "https://www.linkedin.com/"
+      },
+      {
+        "platform": "web",
+        "label": "Portafolio de Francia Jenny Moreno",
+        "url": "https://example.com/"
+      }
+    ]
+  }
+]
