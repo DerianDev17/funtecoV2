@@ -1,3 +1,8 @@
+import { events as defaultEvents } from "../data/events";
+import type { Event } from "../data/events";
+import { teamMembers as defaultTeamMembers } from "../data/team";
+import type { SocialLink, TeamMember } from "../data/team";
+
 export type Role =
   | "Administrador"
   | "Editor"
@@ -22,6 +27,22 @@ export interface Section {
   content: string;
   status: SectionStatus;
   ownerId: string;
+  updatedAt: string;
+}
+
+export interface ManagedTeamMember extends TeamMember {
+  id: string;
+  status: SectionStatus;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ManagedEvent extends Event {
+  id: string;
+  status: SectionStatus;
+  ownerId: string;
+  createdAt: string;
   updatedAt: string;
 }
 
@@ -83,6 +104,8 @@ const ROLE_CAPABILITIES: Record<
 interface AdminState {
   users: User[];
   sections: Section[];
+  teamMembers: ManagedTeamMember[];
+  events: ManagedEvent[];
   currentUserId: string | null;
 }
 
@@ -118,6 +141,19 @@ const createId = () => {
     return globalThis.crypto.randomUUID();
   }
   return random;
+};
+
+const formatDate = (dateISO: string) => {
+  try {
+    return new Intl.DateTimeFormat("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(dateISO));
+  } catch (error) {
+    console.warn("No fue posible formatear la fecha", dateISO, error);
+    return dateISO;
+  }
 };
 
 const initialUsers: User[] = [
@@ -159,9 +195,40 @@ const initialSections: Section[] = [
   },
 ];
 
+const buildInitialTeamMembers = (): ManagedTeamMember[] =>
+  defaultTeamMembers.map((member, index) => {
+    const created = new Date(2023, 1, 15 + index);
+    return {
+      ...member,
+      id: `team-${index + 1}`,
+      status: "published",
+      ownerId: "user-admin",
+      createdAt: created.toISOString(),
+      updatedAt: created.toISOString(),
+    } satisfies ManagedTeamMember;
+  });
+
+const buildInitialEvents = (): ManagedEvent[] =>
+  defaultEvents.map((event, index) => {
+    const created = new Date(2023, 5, 10 + index);
+    const date = event.date ?? new Date().toISOString();
+    return {
+      ...event,
+      id: `event-${index + 1}`,
+      status: "published",
+      ownerId: "user-admin",
+      createdAt: created.toISOString(),
+      updatedAt: created.toISOString(),
+      date,
+      formattedDate: event.formattedDate || formatDate(date),
+    } satisfies ManagedEvent;
+  });
+
 const defaultState: AdminState = {
   users: initialUsers,
   sections: initialSections,
+  teamMembers: buildInitialTeamMembers(),
+  events: buildInitialEvents(),
   currentUserId: null,
 };
 
@@ -202,6 +269,64 @@ export interface AdminStore {
     updates: Partial<Pick<Section, "title" | "content" | "status">>
   ): Section;
   deleteSection(id: string): void;
+  createTeamMember(data: {
+    name: string;
+    role: string;
+    image: string;
+    shortBio: string;
+    bio: string[];
+    focus: string;
+    expertise: string[];
+    highlights: string[];
+    socials: SocialLink[];
+    status: SectionStatus;
+  }): ManagedTeamMember;
+  updateTeamMember(
+    id: string,
+    updates: Partial<
+      Pick<
+        ManagedTeamMember,
+        | "name"
+        | "role"
+        | "image"
+        | "shortBio"
+        | "bio"
+        | "focus"
+        | "expertise"
+        | "highlights"
+        | "socials"
+        | "status"
+      >
+    >
+  ): ManagedTeamMember;
+  deleteTeamMember(id: string): void;
+  createEvent(data: {
+    title: string;
+    shortDescription: string;
+    description: string[];
+    date: string;
+    image: string;
+    location: string;
+    tags: string[];
+    status: SectionStatus;
+  }): ManagedEvent;
+  updateEvent(
+    id: string,
+    updates: Partial<
+      Pick<
+        ManagedEvent,
+        | "title"
+        | "shortDescription"
+        | "description"
+        | "date"
+        | "image"
+        | "location"
+        | "tags"
+        | "status"
+      >
+    >
+  ): ManagedEvent;
+  deleteEvent(id: string): void;
 }
 
 const getCapabilities = (user: User | null) =>
@@ -227,6 +352,46 @@ const canDeleteSection = (
   return section.ownerId === user.id;
 };
 
+const canEditTeamMember = (
+  user: User | null,
+  member: ManagedTeamMember,
+  capabilities: ReturnType<typeof getCapabilities>
+) => {
+  if (!user || !capabilities) return false;
+  if (capabilities.editAnySection) return true;
+  return member.ownerId === user.id;
+};
+
+const canDeleteTeamMember = (
+  user: User | null,
+  member: ManagedTeamMember,
+  capabilities: ReturnType<typeof getCapabilities>
+) => {
+  if (!user || !capabilities) return false;
+  if (capabilities.deleteAnySection) return true;
+  return member.ownerId === user.id;
+};
+
+const canEditEvent = (
+  user: User | null,
+  event: ManagedEvent,
+  capabilities: ReturnType<typeof getCapabilities>
+) => {
+  if (!user || !capabilities) return false;
+  if (capabilities.editAnySection) return true;
+  return event.ownerId === user.id;
+};
+
+const canDeleteEvent = (
+  user: User | null,
+  event: ManagedEvent,
+  capabilities: ReturnType<typeof getCapabilities>
+) => {
+  if (!user || !capabilities) return false;
+  if (capabilities.deleteAnySection) return true;
+  return event.ownerId === user.id;
+};
+
 export const createAdminStore = (
   storage: StorageLike = memoryStorage()
 ): AdminStore => {
@@ -243,6 +408,8 @@ export const createAdminStore = (
         ...parsed,
         users: parsed.users ?? clone(defaultState.users),
         sections: parsed.sections ?? clone(defaultState.sections),
+        teamMembers: parsed.teamMembers ?? clone(defaultState.teamMembers),
+        events: parsed.events ?? clone(defaultState.events),
         currentUserId:
           typeof parsed.currentUserId === "string"
             ? parsed.currentUserId
@@ -344,6 +511,12 @@ export const createAdminStore = (
       state.sections = state.sections.map((section) =>
         section.ownerId === id ? { ...section, ownerId: currentUser!.id } : section
       );
+      state.teamMembers = state.teamMembers.map((member) =>
+        member.ownerId === id ? { ...member, ownerId: currentUser!.id } : member
+      );
+      state.events = state.events.map((event) =>
+        event.ownerId === id ? { ...event, ownerId: currentUser!.id } : event
+      );
       persist();
     },
     createSection(data) {
@@ -417,6 +590,151 @@ export const createAdminStore = (
         "Sin permisos para eliminar esta sección"
       );
       state.sections = state.sections.filter((item) => item.id !== id);
+      persist();
+    },
+    createTeamMember(data) {
+      const currentUser = getCurrentUser();
+      ensure(!!currentUser, "Debes iniciar sesión para crear integrantes");
+      const capabilities = getCapabilities(currentUser);
+      ensure(!!capabilities?.createSections, "Sin permisos para crear integrantes");
+      const status: SectionStatus = capabilities.publish ? data.status : "draft";
+      const now = new Date().toISOString();
+      const member: ManagedTeamMember = {
+        id: `team-${createId()}`,
+        slug: slugify(data.name),
+        name: data.name,
+        role: data.role,
+        image: data.image,
+        shortBio: data.shortBio,
+        bio: data.bio,
+        focus: data.focus,
+        expertise: data.expertise,
+        highlights: data.highlights,
+        socials: data.socials,
+        status,
+        ownerId: currentUser.id,
+        createdAt: now,
+        updatedAt: now,
+      };
+      state.teamMembers = [member, ...state.teamMembers];
+      persist();
+      return clone(member);
+    },
+    updateTeamMember(id, updates) {
+      const currentUser = getCurrentUser();
+      ensure(!!currentUser, "Debes iniciar sesión para editar integrantes");
+      const index = state.teamMembers.findIndex((member) => member.id === id);
+      ensure(index >= 0, "Integrante no encontrado");
+      const member = state.teamMembers[index];
+      const capabilities = getCapabilities(currentUser);
+      ensure(
+        canEditTeamMember(currentUser, member, capabilities),
+        "Sin permisos para editar este integrante"
+      );
+      if (updates.status === "published" && !capabilities?.publish) {
+        ensure(false, "Sin permisos para publicar este integrante");
+      }
+      const newStatus = updates.status ?? member.status;
+      ensure(
+        newStatus === "draft" || newStatus === "published",
+        "Estado del integrante no válido"
+      );
+      const updated: ManagedTeamMember = {
+        ...member,
+        ...updates,
+        status: newStatus,
+        slug: updates.name ? slugify(updates.name) : member.slug,
+        updatedAt: new Date().toISOString(),
+      };
+      state.teamMembers[index] = updated;
+      persist();
+      return clone(updated);
+    },
+    deleteTeamMember(id) {
+      const currentUser = getCurrentUser();
+      ensure(!!currentUser, "Debes iniciar sesión para eliminar integrantes");
+      const member = state.teamMembers.find((item) => item.id === id);
+      ensure(!!member, "Integrante no encontrado");
+      const capabilities = getCapabilities(currentUser);
+      ensure(
+        canDeleteTeamMember(currentUser, member!, capabilities),
+        "Sin permisos para eliminar este integrante"
+      );
+      state.teamMembers = state.teamMembers.filter((item) => item.id !== id);
+      persist();
+    },
+    createEvent(data) {
+      const currentUser = getCurrentUser();
+      ensure(!!currentUser, "Debes iniciar sesión para crear eventos");
+      const capabilities = getCapabilities(currentUser);
+      ensure(!!capabilities?.createSections, "Sin permisos para crear eventos");
+      const status: SectionStatus = capabilities.publish ? data.status : "draft";
+      const now = new Date().toISOString();
+      const formattedDate = formatDate(data.date);
+      const event: ManagedEvent = {
+        id: `event-${createId()}`,
+        slug: slugify(data.title),
+        title: data.title,
+        shortDescription: data.shortDescription,
+        description: data.description,
+        date: data.date,
+        formattedDate,
+        image: data.image,
+        location: data.location,
+        tags: data.tags,
+        status,
+        ownerId: currentUser.id,
+        createdAt: now,
+        updatedAt: now,
+      };
+      state.events = [event, ...state.events];
+      persist();
+      return clone(event);
+    },
+    updateEvent(id, updates) {
+      const currentUser = getCurrentUser();
+      ensure(!!currentUser, "Debes iniciar sesión para editar eventos");
+      const index = state.events.findIndex((event) => event.id === id);
+      ensure(index >= 0, "Evento no encontrado");
+      const event = state.events[index];
+      const capabilities = getCapabilities(currentUser);
+      ensure(
+        canEditEvent(currentUser, event, capabilities),
+        "Sin permisos para editar este evento"
+      );
+      if (updates.status === "published" && !capabilities?.publish) {
+        ensure(false, "Sin permisos para publicar este evento");
+      }
+      const newStatus = updates.status ?? event.status;
+      ensure(
+        newStatus === "draft" || newStatus === "published",
+        "Estado del evento no válido"
+      );
+      const date = updates.date ?? event.date;
+      const updated: ManagedEvent = {
+        ...event,
+        ...updates,
+        status: newStatus,
+        slug: updates.title ? slugify(updates.title) : event.slug,
+        date,
+        formattedDate: updates.date ? formatDate(updates.date) : event.formattedDate,
+        updatedAt: new Date().toISOString(),
+      };
+      state.events[index] = updated;
+      persist();
+      return clone(updated);
+    },
+    deleteEvent(id) {
+      const currentUser = getCurrentUser();
+      ensure(!!currentUser, "Debes iniciar sesión para eliminar eventos");
+      const event = state.events.find((item) => item.id === id);
+      ensure(!!event, "Evento no encontrado");
+      const capabilities = getCapabilities(currentUser);
+      ensure(
+        canDeleteEvent(currentUser, event!, capabilities),
+        "Sin permisos para eliminar este evento"
+      );
+      state.events = state.events.filter((item) => item.id !== id);
       persist();
     },
   };
