@@ -2,18 +2,19 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { teamMembers } from '../data/team';
 ---
-<BaseLayout title="Sobre Nosotros" description="Conoce la misión, visión y valores de Funteco, fundación que impulsa justicia racial y movilidad humana en Ecuador.">
+<BaseLayout title="Nosotras" description="Conoce al equipo feminista afro de Funteco que teje investigación, educación y cuidado comunitario en Ecuador.">
   <Header current="/about" />
   <main class="bg-gradient-to-br from-neutral via-white to-accent-blush/20">
     <section class="py-20">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
-          Quiénes somos
+          Nosotras Funteco
         </span>
-        <h1 class="text-4xl font-bold text-primary-dark leading-tight">Tejemos conocimientos para comunidades afro en movimiento</h1>
+        <h1 class="text-4xl font-bold text-primary-dark leading-tight">Nos articulamos para que las comunidades afro vivan con dignidad</h1>
         <p class="text-neutral-black/80 leading-relaxed">
-          Funteco es una fundación sin fines de lucro que promueve y protege los derechos humanos de las poblaciones afrodescendientes y de las personas en situación de movilidad, especialmente mujeres y niñas. Combinamos investigación, educación y cultura para impulsar cambios sostenibles.
+          Somos una red de mujeres afroecuatorianas que investiga, acompaña y celebra las luchas territoriales. Combinamos datos, pedagogías ancestrales y creatividad urbana para defender los derechos de quienes migran y sostienen el tejido comunitario.
         </p>
       </div>
     </section>
@@ -26,10 +27,10 @@ import Footer from '../components/Footer.astro';
           </div>
           <h2 class="text-2xl font-semibold text-primary-dark mb-4">Justicia racial con enfoque comunitario</h2>
           <p class="text-neutral-black/80 leading-relaxed">
-            Investigamos, documentamos y difundimos conocimientos que fortalecen la defensa de los derechos humanos de las comunidades afrodescendientes y las personas que requieren protección internacional.
+            Investigamos, documentamos y difundimos conocimientos que fortalecen la defensa de los derechos humanos de las comunidades afrodescendientes y de las personas que requieren protección internacional.
           </p>
           <p class="mt-4 text-neutral-black/80 leading-relaxed">
-            Construimos herramientas pedagógicas y acompañamiento psicosocial para garantizar respuestas integrales frente a la discriminación, el racismo y la violencia de género.
+            Construimos herramientas pedagógicas, metodologías digitales y acompañamiento psicosocial para responder a la discriminación, el racismo y las violencias de género.
           </p>
         </div>
         <div class="rounded-3xl bg-white/90 border border-accent-blush/40 p-8 shadow-lg">
@@ -43,6 +44,45 @@ import Footer from '../components/Footer.astro';
           <p class="mt-4 text-neutral-black/80 leading-relaxed">
             Soñamos con territorios donde las juventudes afrodescendientes lideren procesos de innovación social y económica con dignidad y reconocimiento pleno de sus saberes.
           </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-24">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 space-y-4">
+          <span class="inline-flex items-center gap-2 rounded-full bg-accent-flamingo/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark">
+            Equipo que sostiene
+          </span>
+          <h2 class="text-3xl font-bold text-primary-dark leading-tight">Un equipo que teje investigación, cuidado y cultura</h2>
+          <p class="max-w-3xl mx-auto text-neutral-black/80 leading-relaxed">
+            Cada integrante conecta saberes ancestrales con innovación social para acompañar a mujeres, juventudes y familias afro en Ecuador. Te presentamos a quienes impulsan los programas y alianzas de Funteco.
+          </p>
+        </div>
+        <div class="grid gap-6 md:grid-cols-6 auto-rows-[minmax(220px,_auto)]">
+          {teamMembers.map((member, index) => (
+            <article
+              class={`group relative overflow-hidden rounded-3xl border border-accent-blush/40 bg-white/90 shadow-lg ${member.layout}`}
+            >
+              <img
+                src={member.image}
+                alt={`Retrato de ${member.name}`}
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading={index === 0 ? 'eager' : 'lazy'}
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-primary-dark/80 via-primary-dark/40 to-transparent"></div>
+              <div class="absolute inset-x-0 bottom-0 space-y-3 p-6 text-white">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent/80">{member.role}</p>
+                  <h3 class="text-2xl font-semibold leading-snug">{member.name}</h3>
+                </div>
+                <p class="text-sm text-white/80 leading-relaxed">{member.bio}</p>
+                <div class="rounded-2xl bg-white/10 p-3 text-xs font-medium text-white/90 backdrop-blur">
+                  {member.focus}
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
