@@ -1,0 +1,198 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { ROLES } from "../../utils/adminStore";
+import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
+---
+<AdminLayout title="Centro de control">
+  <div
+    id="admin-app"
+    class="grid gap-10 rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-xl shadow-slate-950/40"
+  >
+    <section id="login-view" class="mx-auto w-full max-w-md">
+      <h2 class="text-xl font-semibold text-teal-200">Acceso privado</h2>
+      <p class="mt-1 text-sm text-slate-400">
+        Introduce tus credenciales para acceder al gestor de contenidos.
+      </p>
+      <form id="login-form" class="mt-6 space-y-4">
+        <label class="block text-sm">
+          <span class="mb-1 block font-medium text-slate-300">Usuario</span>
+          <input
+            name="username"
+            type="text"
+            required
+            autocomplete="username"
+            class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+          />
+        </label>
+        <label class="block text-sm">
+          <span class="mb-1 block font-medium text-slate-300">Contraseña</span>
+          <input
+            name="password"
+            type="password"
+            required
+            autocomplete="current-password"
+            class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+          />
+        </label>
+        <button
+          type="submit"
+          class="w-full rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+        >
+          Entrar
+        </button>
+      </form>
+      <p
+        id="login-error"
+        class="mt-4 hidden rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
+      ></p>
+    </section>
+
+    <section id="dashboard" class="hidden space-y-10">
+      <div class="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-6 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-teal-200">
+            Bienvenido, <span id="current-user"></span>
+          </h2>
+          <p class="text-sm text-slate-400">
+            Gestiona el contenido y los usuarios según tus permisos.
+          </p>
+        </div>
+        <button
+          id="logout-btn"
+          class="self-start rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-rose-500 hover:text-rose-300"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+
+      <div class="grid gap-8 lg:grid-cols-2">
+        <section
+          aria-labelledby="content-manager"
+          class="space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+        >
+          <div>
+            <h3 id="content-manager" class="text-lg font-semibold text-teal-200">
+              Gestor de contenidos
+            </h3>
+            <p class="mt-1 text-sm text-slate-400">
+              Crea, edita y publica secciones sin afectar el diseño del sitio.
+            </p>
+          </div>
+
+          <form id="section-form" class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+            <input type="hidden" name="sectionId" />
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Título</span>
+              <input
+                name="title"
+                type="text"
+                required
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              />
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Contenido</span>
+              <textarea
+                name="content"
+                required
+                rows="4"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              ></textarea>
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Estado</span>
+              <select
+                name="status"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              >
+                <option value="draft">Borrador</option>
+                <option value="published">Publicado</option>
+              </select>
+            </label>
+            <div class="flex items-center gap-3">
+              <button
+                type="submit"
+                class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+              >
+                Guardar sección
+              </button>
+              <button
+                type="button"
+                id="cancel-edit"
+                class="hidden rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 transition hover:border-slate-500"
+              >
+                Cancelar edición
+              </button>
+            </div>
+            <p
+              id="section-feedback"
+              class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+            ></p>
+          </form>
+
+          <ul id="section-list" class="space-y-3 text-sm text-slate-200"></ul>
+        </section>
+
+        <section
+          id="user-management"
+          class="hidden space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          aria-labelledby="user-manager"
+        >
+          <div>
+            <h3 id="user-manager" class="text-lg font-semibold text-teal-200">
+              Gestión de usuarios y roles
+            </h3>
+            <p class="mt-1 text-sm text-slate-400">
+              Controla quién puede administrar contenidos o gestionar permisos.
+            </p>
+          </div>
+
+          <form id="user-form" class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Usuario</span>
+              <input
+                name="username"
+                required
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              />
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Contraseña</span>
+              <input
+                name="password"
+                type="password"
+                required
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              />
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Rol</span>
+              <select
+                name="role"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              >
+                {ROLES.map((role) => (
+                  <option value={role}>{role}</option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="submit"
+              class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+            >
+              Crear usuario
+            </button>
+            <p
+              id="user-feedback"
+              class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+            ></p>
+          </form>
+
+          <ul id="user-list" class="space-y-3 text-sm text-slate-200"></ul>
+        </section>
+      </div>
+    </section>
+  </div>
+</AdminLayout>
+
+<script type="module" src={adminDashboardScript}></script>
