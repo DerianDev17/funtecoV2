@@ -56,6 +56,12 @@ if (!root) {
   const userList = document.querySelector<HTMLElement>("#user-list");
   const userFeedback = document.querySelector<HTMLElement>("#user-feedback");
   const userNavBtn = document.querySelector<HTMLButtonElement>("#user-nav-btn");
+  const userNavBtnMobile = document.querySelector<HTMLButtonElement>(
+    "#user-nav-btn-mobile"
+  );
+  const userNavButtons = [userNavBtn, userNavBtnMobile].filter(
+    (button): button is HTMLButtonElement => Boolean(button)
+  );
 
   const viewButtons = Array.from(
     document.querySelectorAll<HTMLButtonElement>("[data-view]")
@@ -143,6 +149,100 @@ if (!root) {
     }
   };
 
+  type SortableUid = "sections" | "team-members" | "events";
+  const sortableInitialized = new WeakSet<HTMLElement>();
+  const setupSortable = (
+    container: HTMLElement | null,
+    uid: SortableUid,
+    render: () => void
+  ) => {
+    if (!container || sortableInitialized.has(container)) return;
+    sortableInitialized.add(container);
+    let draggingId: string | null = null;
+
+    const cleanupStyles = () => {
+      container
+        .querySelectorAll<HTMLElement>("[data-entry-id]")
+        .forEach((element) => {
+          element.classList.remove("opacity-60", "ring-1", "ring-teal-500/40");
+        });
+    };
+
+    const finalize = () => {
+      if (!draggingId) {
+        cleanupStyles();
+        return;
+      }
+      const orderedIds = Array.from(
+        container.querySelectorAll<HTMLElement>("[data-entry-id]")
+      )
+        .map((item) => item.dataset.entryId)
+        .filter((value): value is string => Boolean(value));
+      cleanupStyles();
+      contentManager.reorderEntries(uid, orderedIds);
+      draggingId = null;
+      render();
+    };
+
+    container.addEventListener("dragstart", (event) => {
+      const target = (event.target as HTMLElement).closest<HTMLElement>(
+        "[data-entry-id]"
+      );
+      if (!target?.dataset.entryId) return;
+      draggingId = target.dataset.entryId;
+      target.classList.add("opacity-60");
+      event.dataTransfer?.setData("text/plain", draggingId);
+      event.dataTransfer?.setDragImage(target, 16, 16);
+      event.dataTransfer?.setData("text/html", target.outerHTML);
+      event.dataTransfer.effectAllowed = "move";
+    });
+
+    container.addEventListener("dragover", (event) => {
+      if (!draggingId) return;
+      event.preventDefault();
+      const target = (event.target as HTMLElement).closest<HTMLElement>(
+        "[data-entry-id]"
+      );
+      const draggingEl = container.querySelector<HTMLElement>(
+        `[data-entry-id="${draggingId}"]`
+      );
+      if (!target || !draggingEl || target === draggingEl) return;
+      const rect = target.getBoundingClientRect();
+      const shouldInsertBefore = event.clientY < rect.top + rect.height / 2;
+      if (shouldInsertBefore) {
+        container.insertBefore(draggingEl, target);
+      } else if (target.nextElementSibling) {
+        container.insertBefore(draggingEl, target.nextElementSibling);
+      } else {
+        container.appendChild(draggingEl);
+      }
+    });
+
+    container.addEventListener("dragenter", (event) => {
+      if (!draggingId) return;
+      const target = (event.target as HTMLElement).closest<HTMLElement>(
+        "[data-entry-id]"
+      );
+      target?.classList.add("ring-1", "ring-teal-500/40");
+    });
+
+    container.addEventListener("dragleave", (event) => {
+      const target = (event.target as HTMLElement).closest<HTMLElement>(
+        "[data-entry-id]"
+      );
+      target?.classList.remove("ring-1", "ring-teal-500/40");
+    });
+
+    container.addEventListener("drop", (event) => {
+      event.preventDefault();
+      finalize();
+    });
+
+    container.addEventListener("dragend", () => {
+      finalize();
+    });
+  };
+
   const updateStatusControl = (
     select: HTMLSelectElement | null,
     canPublish: boolean
@@ -167,15 +267,11 @@ if (!root) {
       if (!buttonView) return;
       const isActive = buttonView === view;
       button.setAttribute("aria-pressed", String(isActive));
-      button.classList.toggle("border-teal-500/60", isActive);
-      button.classList.toggle("bg-teal-500/10", isActive);
-      button.classList.toggle("text-teal-200", isActive);
-      button.classList.toggle("hover:bg-teal-500/20", isActive);
-      button.classList.toggle("border-slate-700", !isActive);
-      button.classList.toggle("bg-slate-900", !isActive);
-      button.classList.toggle("text-slate-300", !isActive);
-      button.classList.toggle("hover:border-teal-400", !isActive);
-      button.classList.toggle("hover:text-teal-200", !isActive);
+      if (isActive) {
+        button.dataset.active = "true";
+      } else {
+        delete button.dataset.active;
+      }
     });
     viewPanels.forEach((panel) => {
       const panelView = panel.dataset.viewPanel as ViewKey | undefined;
@@ -187,7 +283,10 @@ if (!root) {
     button.addEventListener("click", () => {
       const view = button.dataset.view as ViewKey | undefined;
       if (!view) return;
-      if (view === "users" && userNavBtn?.classList.contains("hidden")) {
+      const usersButtonHidden =
+        userNavButtons.length > 0 &&
+        userNavButtons.every((button) => button.classList.contains("hidden"));
+      if (view === "users" && usersButtonHidden) {
         return;
       }
       setView(view);
@@ -199,7 +298,7 @@ if (!root) {
     if (!contentTypeList) return;
     if (!types.length) {
       contentTypeList.innerHTML =
-        '<p class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Configura tu primer tipo de contenido para habilitar colecciones personalizadas.</p>';
+        '<p class="rounded-2xl border border-dashed border-slate-800/60 bg-slate-950/50 px-4 py-3 text-sm text-slate-400">Configura tu primer tipo de contenido para habilitar colecciones personalizadas.</p>';
       return;
     }
     contentTypeList.innerHTML = types
@@ -207,16 +306,16 @@ if (!root) {
         const fields = type.fields
           .map(
             (field) => `
-              <li class="flex items-start justify-between gap-3 rounded border border-slate-800 bg-slate-900/60 px-3 py-2">
-                <div>
+              <li class="flex items-start justify-between gap-4 rounded-xl border border-slate-800/60 bg-slate-950/60 px-3 py-2">
+                <div class="space-y-1">
                   <p class="font-medium text-slate-200">${escapeHtml(field.name)}</p>
-                  <p class="text-xs text-slate-400">Tipo: ${escapeHtml(field.type)}${
+                  <p class="text-xs text-slate-500">Tipo: ${escapeHtml(field.type)}${
                     field.required ? " · obligatorio" : ""
                   }</p>
                 </div>
                 ${
                   type.configurable && field.configurable
-                    ? `<button type="button" class="rounded border border-slate-700 px-2 py-1 text-xs text-rose-200 transition hover:border-rose-500/60 hover:text-rose-100" data-action="remove-field" data-content-type="${escapeHtml(
+                    ? `<button type="button" class="rounded-lg border border-rose-500/60 px-2 py-1 text-xs text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="remove-field" data-content-type="${escapeHtml(
                         type.uid
                       )}" data-field="${escapeHtml(field.id)}">Eliminar</button>`
                     : ""
@@ -227,27 +326,27 @@ if (!root) {
           .join("");
         const canDelete = type.configurable;
         return `
-          <article class="space-y-3 rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-            <header class="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h4 class="text-base font-semibold text-slate-200">${escapeHtml(
+          <article class="space-y-4 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-5 shadow-inner shadow-slate-950/30">
+            <header class="flex flex-wrap items-start justify-between gap-4">
+              <div class="space-y-1">
+                <h4 class="text-base font-semibold text-slate-100">${escapeHtml(
                   type.displayName
                 )}</h4>
                 <p class="text-xs text-slate-400">${escapeHtml(type.description)}</p>
-                <p class="text-[11px] uppercase tracking-wide text-slate-500">
-                  UID: ${escapeHtml(type.uid)} · Categoría: ${escapeHtml(type.category)}
+                <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">
+                  UID · ${escapeHtml(type.uid)} · ${escapeHtml(type.category)}
                 </p>
               </div>
               ${
                 canDelete
-                  ? `<button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-xs font-semibold text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-type" data-content-type="${escapeHtml(
+                  ? `<button type="button" class="rounded-lg border border-rose-500/60 px-3 py-1 text-xs font-semibold text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-type" data-content-type="${escapeHtml(
                       type.uid
                     )}">Eliminar</button>`
                   : ""
               }
             </header>
             <ul class="space-y-2 text-sm text-slate-200">${fields ||
-              '<li class="rounded border border-dashed border-slate-700 px-3 py-2 text-xs text-slate-400">Aún no hay campos configurados.</li>'
+              '<li class="rounded-xl border border-dashed border-slate-800/60 bg-slate-950/40 px-3 py-2 text-xs text-slate-500">Aún no hay campos configurados.</li>'
             }</ul>
           </article>
         `;
@@ -274,33 +373,41 @@ if (!root) {
     const entries = contentManager.listEntries("sections");
     if (!entries.length) {
       sectionList.innerHTML =
-        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Aún no hay secciones registradas.</li>';
+        '<li class="rounded-2xl border border-dashed border-slate-800/60 bg-slate-950/50 px-4 py-3 text-sm text-slate-400">Aún no hay secciones registradas.</li>';
       return;
     }
     sectionList.innerHTML = entries
       .map(
         (entry) => `
-          <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p class="font-semibold text-slate-200">${escapeHtml(
-                  String(entry.attributes.title ?? "")
-                )}</p>
+          <li
+            class="group relative grid gap-3 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 text-sm shadow-inner shadow-slate-950/20"
+            data-entry-id="${entry.id}"
+            draggable="true"
+          >
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="space-y-2">
+                <p class="flex items-center gap-2 font-semibold text-slate-100">
+                  <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-slate-900/80 text-xs text-slate-500">⠿</span>
+                  ${escapeHtml(String(entry.attributes.title ?? ""))}
+                </p>
                 <p class="text-xs text-slate-400">${truncate(
                   escapeHtml(String(entry.attributes.content ?? "")),
                   120
                 )}</p>
               </div>
-              <div class="flex items-center gap-2 text-xs">
-                <span class="rounded-full border border-slate-700 px-2 py-1 text-slate-300">${
-                  entry.status === "published" ? "Publicado" : "Borrador"
-                }</span>
+              <div class="flex flex-col items-end gap-2 text-xs text-slate-400">
+                <span class="inline-flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1 text-slate-200">
+                  <span class="h-2 w-2 rounded-full ${
+                    entry.status === "published" ? "bg-emerald-400" : "bg-amber-400"
+                  }"></span>
+                  ${entry.status === "published" ? "Publicado" : "Borrador"}
+                </span>
                 <span class="text-slate-500">${escapeHtml(toDateTime(entry.updatedAt))}</span>
               </div>
             </div>
-            <div class="mt-3 flex flex-wrap gap-2 text-xs">
-              <button type="button" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-section" data-id="${entry.id}">Editar</button>
-              <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-section" data-id="${entry.id}">Eliminar</button>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <button type="button" class="rounded-lg border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-section" data-id="${entry.id}">Editar</button>
+              <button type="button" class="rounded-lg border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-section" data-id="${entry.id}">Eliminar</button>
             </div>
           </li>
         `
@@ -317,12 +424,14 @@ if (!root) {
     if (!container) return;
     const filtered = entries.filter((entry) => entry.status === status);
     if (!filtered.length) {
-      container.innerHTML = `<p class="text-xs text-slate-500">${escapeHtml(emptyMessage)}</p>`;
+      container.innerHTML = `<p class="rounded-lg border border-dashed border-slate-800/60 bg-slate-950/40 px-3 py-2 text-xs text-slate-500">${escapeHtml(
+        emptyMessage
+      )}</p>`;
       return;
     }
     container.innerHTML = filtered
       .map((entry) =>
-        `<p class="rounded border border-slate-800 bg-slate-900/60 px-2 py-1 text-xs text-slate-300">${escapeHtml(
+        `<p class="rounded-lg border border-slate-800/60 bg-slate-950/60 px-3 py-1 text-xs text-slate-300">${escapeHtml(
           String(entry.attributes.name ?? entry.attributes.title ?? "")
         )}</p>`
       )
@@ -334,7 +443,7 @@ if (!root) {
     const entries = contentManager.listEntries("team-members");
     if (!entries.length) {
       teamList.innerHTML =
-        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Registra el primer perfil para tu equipo.</li>';
+        '<li class="rounded-2xl border border-dashed border-slate-800/60 bg-slate-950/50 px-4 py-3 text-sm text-slate-400">Registra el primer perfil para tu equipo.</li>';
     } else {
       teamList.innerHTML = entries
         .map(
@@ -342,26 +451,48 @@ if (!root) {
             const name = String(entry.attributes.name ?? "");
             const role = String(entry.attributes.role ?? "");
             const image = String(entry.attributes.image ?? "");
+            const shortBio = String(entry.attributes.shortBio ?? "");
+            const safeName = escapeHtml(name);
+            const safeRole = escapeHtml(role);
+            const safeImage = escapeHtml(image);
+            const avatar = image
+              ? `<img src="${safeImage}" alt="${safeName}" class="h-12 w-12 rounded-xl object-cover shadow-inner shadow-slate-950/40" />`
+              : `<span class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900/80 text-lg text-slate-500">👤</span>`;
+            const statusLabel = entry.status === "published" ? "Publicado" : "Borrador";
+            const statusDot = entry.status === "published" ? "bg-emerald-400" : "bg-amber-400";
             return `
-            <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p class="font-semibold text-slate-200">${escapeHtml(name)}</p>
-                  <p class="text-xs text-slate-400">${escapeHtml(role)}</p>
+            <li
+              class="group grid gap-3 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 text-sm shadow-inner shadow-slate-950/20"
+              data-entry-id="${entry.id}"
+              draggable="true"
+            >
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div class="flex items-start gap-3">
+                  <span class="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-lg bg-slate-900/80 text-xs text-slate-500">⠿</span>
+                  ${avatar}
+                  <div class="space-y-1">
+                    <p class="font-semibold text-slate-100">${safeName}</p>
+                    <p class="text-xs text-slate-400">${safeRole}</p>
+                    <p class="text-xs text-slate-500">${truncate(
+                      escapeHtml(shortBio),
+                      100
+                    )}</p>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2 text-xs">
-                  <span class="rounded-full border border-slate-700 px-2 py-1 text-slate-300">${
-                    entry.status === "published" ? "Publicado" : "Borrador"
-                  }</span>
+                <div class="flex flex-col items-end gap-2 text-xs text-slate-400">
+                  <span class="inline-flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1 text-slate-200">
+                    <span class="h-2 w-2 rounded-full ${statusDot}"></span>
+                    ${statusLabel}
+                  </span>
                   <span class="text-slate-500">${escapeHtml(toDateTime(entry.updatedAt))}</span>
                 </div>
               </div>
-              <div class="mt-3 flex flex-wrap items-center gap-3 text-xs">
-                <button type="button" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-member" data-id="${entry.id}">Editar</button>
-                <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-member" data-id="${entry.id}">Eliminar</button>
+              <div class="flex flex-wrap items-center gap-2 text-xs">
+                <button type="button" class="rounded-lg border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-member" data-id="${entry.id}">Editar</button>
+                <button type="button" class="rounded-lg border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-member" data-id="${entry.id}">Eliminar</button>
                 ${
                   image
-                    ? `<a href="${escapeHtml(image)}" target="_blank" rel="noopener" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-slate-500">Ver imagen</a>`
+                    ? `<a href="${safeImage}" target="_blank" rel="noopener" class="rounded-lg border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-slate-500">Ver imagen</a>`
                     : ""
                 }
               </div>
@@ -380,34 +511,75 @@ if (!root) {
     const entries = contentManager.listEntries("events");
     if (!entries.length) {
       eventList.innerHTML =
-        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Configura eventos, talleres o hitos relevantes.</li>';
+        '<li class="rounded-2xl border border-dashed border-slate-800/60 bg-slate-950/50 px-4 py-3 text-sm text-slate-400">Configura eventos, talleres o hitos relevantes.</li>';
     } else {
       eventList.innerHTML = entries
         .map(
-          (entry) => `
-          <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p class="font-semibold text-slate-200">${escapeHtml(
-                  String(entry.attributes.title ?? "")
-                )}</p>
-                <p class="text-xs text-slate-400">${escapeHtml(
-                  String(entry.attributes.shortDescription ?? "")
-                )}</p>
+          (entry) => {
+            const title = String(entry.attributes.title ?? "");
+            const shortDescription = String(entry.attributes.shortDescription ?? "");
+            const rawDate = String(entry.attributes.date ?? "");
+            const location = String(entry.attributes.location ?? "");
+            const tags = Array.isArray(entry.attributes.tags)
+              ? (entry.attributes.tags as string[])
+              : [];
+            const safeTitle = escapeHtml(title);
+            const safeDescription = truncate(escapeHtml(shortDescription), 120);
+            const safeLocation = escapeHtml(location || "Online");
+            const eventDate = rawDate
+              ? escapeHtml(toDateTime(rawDate))
+              : escapeHtml(toDateTime(entry.updatedAt));
+            const statusLabel = entry.status === "published" ? "Publicado" : "Borrador";
+            const statusDot = entry.status === "published" ? "bg-emerald-400" : "bg-amber-400";
+            const tagsPreview = tags
+              .slice(0, 3)
+              .map(
+                (tag) =>
+                  `<span class="rounded-full border border-slate-800/60 px-2 py-0.5 text-[11px] text-slate-400">${escapeHtml(tag)}</span>`
+              )
+              .join(" ");
+            const extraTags =
+              tags.length > 3
+                ? `<span class="text-[11px] text-slate-600">+${tags.length - 3}</span>`
+                : "";
+            return `
+          <li
+            class="group grid gap-3 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 text-sm shadow-inner shadow-slate-950/20"
+            data-entry-id="${entry.id}"
+            draggable="true"
+          >
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="space-y-2">
+                <p class="flex items-center gap-2 font-semibold text-slate-100">
+                  <span class="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-slate-900/80 text-xs text-slate-500">⠿</span>
+                  ${safeTitle}
+                </p>
+                <p class="text-xs text-slate-400">${safeDescription}</p>
+                <div class="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                  <span class="inline-flex items-center gap-2 rounded-full border border-slate-800/70 px-2 py-1">📅 ${eventDate}</span>
+                  <span class="inline-flex items-center gap-2 rounded-full border border-slate-800/70 px-2 py-1">📍 ${safeLocation}</span>
+                </div>
+                ${
+                  tags.length
+                    ? `<div class="flex flex-wrap gap-1">${tagsPreview}${extraTags}</div>`
+                    : ""
+                }
               </div>
-              <div class="flex items-center gap-2 text-xs">
-                <span class="rounded-full border border-slate-700 px-2 py-1 text-slate-300">${
-                  entry.status === "published" ? "Publicado" : "Borrador"
-                }</span>
+              <div class="flex flex-col items-end gap-2 text-xs text-slate-400">
+                <span class="inline-flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1 text-slate-200">
+                  <span class="h-2 w-2 rounded-full ${statusDot}"></span>
+                  ${statusLabel}
+                </span>
                 <span class="text-slate-500">${escapeHtml(toDateTime(entry.updatedAt))}</span>
               </div>
             </div>
-            <div class="mt-3 flex flex-wrap gap-2 text-xs">
-              <button type="button" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-event" data-id="${entry.id}">Editar</button>
-              <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-event" data-id="${entry.id}">Eliminar</button>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <button type="button" class="rounded-lg border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-event" data-id="${entry.id}">Editar</button>
+              <button type="button" class="rounded-lg border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-event" data-id="${entry.id}">Eliminar</button>
             </div>
           </li>
-        `
+        `;
+          }
         )
         .join("");
     }
@@ -419,55 +591,60 @@ if (!root) {
         ? draft
             .map(
               (entry) =>
-                `<p class="rounded border border-slate-800 bg-slate-900/60 px-2 py-1 text-xs text-slate-300">${escapeHtml(
+                `<p class="rounded-lg border border-slate-800/60 bg-slate-950/60 px-3 py-1 text-xs text-slate-300">${escapeHtml(
                   String(entry.attributes.title ?? "")
                 )}</p>`
             )
             .join("")
-        : '<p class="text-xs text-slate-500">Sin borradores</p>';
+        : '<p class="rounded-lg border border-dashed border-slate-800/60 bg-slate-950/40 px-3 py-2 text-xs text-slate-500">Sin borradores</p>';
     }
     if (eventPreviewPublished) {
       eventPreviewPublished.innerHTML = published.length
         ? published
             .map(
               (entry) =>
-                `<p class="rounded border border-slate-800 bg-slate-900/60 px-2 py-1 text-xs text-slate-300">${escapeHtml(
+                `<p class="rounded-lg border border-slate-800/60 bg-slate-950/60 px-3 py-1 text-xs text-slate-300">${escapeHtml(
                   String(entry.attributes.title ?? "")
                 )}</p>`
             )
             .join("")
-        : '<p class="text-xs text-slate-500">Sin publicaciones</p>';
+        : '<p class="rounded-lg border border-dashed border-slate-800/60 bg-slate-950/40 px-3 py-2 text-xs text-slate-500">Sin publicaciones</p>';
     }
   };
+
+  setupSortable(sectionList, "sections", renderSections);
+  setupSortable(teamList, "team-members", renderTeam);
+  setupSortable(eventList, "events", renderEvents);
 
   const renderMedia = () => {
     if (!mediaLibraryList) return;
     const assets = mediaLibrary.list();
     if (!assets.length) {
       mediaLibraryList.innerHTML =
-        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Sube tus primeras imágenes o documentos para reutilizarlos en el sitio.</li>';
+        '<li class="rounded-2xl border border-dashed border-slate-800/60 bg-slate-950/50 px-4 py-3 text-sm text-slate-400">Sube tus primeras imágenes o documentos para reutilizarlos en el sitio.</li>';
       return;
     }
     mediaLibraryList.innerHTML = assets
       .map(
         (asset) => `
-        <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p class="font-semibold text-slate-200">${escapeHtml(asset.name)}</p>
-              <p class="text-xs text-slate-400">${escapeHtml(asset.type)} · ${escapeHtml(
-          asset.createdBy
-        )}</p>
+        <li class="grid gap-3 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 text-sm shadow-inner shadow-slate-950/20">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="space-y-1">
+              <p class="font-semibold text-slate-100">${escapeHtml(asset.name)}</p>
+              <p class="text-xs text-slate-400">${escapeHtml(asset.type)} · ${escapeHtml(asset.createdBy)}</p>
               ${asset.altText ? `<p class="text-xs text-slate-500">Alt: ${escapeHtml(asset.altText)}</p>` : ""}
             </div>
-            <div class="flex items-center gap-2 text-xs text-slate-500">
+            <div class="flex flex-col items-end gap-1 text-xs text-slate-500">
               <span>${escapeHtml(toDateTime(asset.updatedAt))}</span>
+              <span class="rounded-full border border-slate-800/60 px-2 py-0.5 text-[11px] text-slate-500">ID: ${escapeHtml(
+                asset.id
+              )}</span>
             </div>
           </div>
-          <div class="mt-3 flex flex-wrap gap-2 text-xs">
-            <a href="${escapeHtml(asset.url)}" target="_blank" rel="noopener" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200">Abrir recurso</a>
-            <button type="button" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-asset" data-id="${asset.id}">Actualizar alt</button>
-            <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-asset" data-id="${asset.id}">Eliminar</button>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <a href="${escapeHtml(asset.url)}" target="_blank" rel="noopener" class="rounded-lg border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200">Abrir recurso</a>
+            <button type="button" class="rounded-lg border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-asset" data-id="${asset.id}">Actualizar alt</button>
+            <button type="button" class="rounded-lg border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-asset" data-id="${asset.id}">Eliminar</button>
           </div>
         </li>
       `
@@ -480,7 +657,7 @@ if (!root) {
     const users = usersRolesPermissions.listUsers();
     if (!users.length) {
       userList.innerHTML =
-        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">No hay cuentas registradas.</li>';
+        '<li class="rounded-2xl border border-dashed border-slate-800/60 bg-slate-950/50 px-4 py-3 text-sm text-slate-400">No hay cuentas registradas.</li>';
       return;
     }
     userList.innerHTML = users
@@ -494,14 +671,14 @@ if (!root) {
           .filter(Boolean)
           .join(" · ");
         return `
-          <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
+          <li class="grid gap-3 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4 text-sm shadow-inner shadow-slate-950/20">
             <div class="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p class="font-semibold text-slate-200">${escapeHtml(user.username)}</p>
+              <div class="space-y-1">
+                <p class="font-semibold text-slate-100">${escapeHtml(user.username)}</p>
                 <p class="text-xs text-slate-400">${escapeHtml(user.role)}</p>
                 <p class="text-[11px] text-slate-500">${escapeHtml(capabilitiesSummary)}</p>
               </div>
-              <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-xs text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-user" data-id="${user.id}">Eliminar</button>
+              <button type="button" class="rounded-lg border border-rose-500/60 px-3 py-1 text-xs text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-user" data-id="${user.id}">Eliminar</button>
             </div>
           </li>
         `;
@@ -511,7 +688,9 @@ if (!root) {
 
   const updateUserNavVisibility = () => {
     const canManage = usersRolesPermissions.canCurrentUserManageUsers();
-    setHidden(userNavBtn, !canManage);
+    userNavButtons.forEach((button) => {
+      setHidden(button, !canManage);
+    });
     if (!canManage && activeView === "users") {
       setView("content-types");
     }

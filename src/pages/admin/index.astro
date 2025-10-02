@@ -6,290 +6,376 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
 <AdminLayout title="Centro de control">
   <div
     id="admin-app"
-    class="grid gap-10 rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-xl shadow-slate-950/40"
+    class="min-h-[720px] rounded-3xl border border-slate-800/60 bg-slate-950/70 shadow-2xl shadow-slate-950/60 ring-1 ring-slate-900/60"
   >
-    <section id="login-view" class="mx-auto w-full max-w-md">
-      <h2 class="text-xl font-semibold text-teal-200">Acceso privado</h2>
-      <p class="mt-1 text-sm text-slate-400">
-        Introduce tus credenciales para acceder al gestor de contenidos.
-      </p>
-      <form id="login-form" class="mt-6 space-y-4">
-        <label class="block text-sm">
-          <span class="mb-1 block font-medium text-slate-300">Usuario</span>
-          <input
-            name="username"
-            type="text"
-            required
-            autocomplete="username"
-            class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-          />
-        </label>
-        <label class="block text-sm">
-          <span class="mb-1 block font-medium text-slate-300">Contraseña</span>
-          <input
-            name="password"
-            type="password"
-            required
-            autocomplete="current-password"
-            class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-          />
-        </label>
-        <button
-          type="submit"
-          class="w-full rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
-        >
-          Entrar
-        </button>
-      </form>
-      <p
-        id="login-error"
-        class="mt-4 hidden rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
-      ></p>
-    </section>
-
-    <section id="dashboard" class="hidden space-y-10">
-      <div class="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h2 class="text-xl font-semibold text-teal-200">
-            Bienvenido, <span id="current-user"></span>
-          </h2>
+    <section
+      id="login-view"
+      class="flex h-full flex-col items-center justify-center gap-6 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950/80 px-6 py-16 text-center"
+    >
+      <div class="w-full max-w-md space-y-6 rounded-3xl border border-slate-800/60 bg-slate-950/80 p-10 text-left shadow-xl">
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Panel privado</p>
+          <h2 class="text-2xl font-semibold text-teal-200">Acceso al dashboard</h2>
           <p class="text-sm text-slate-400">
-            Gestiona el contenido y los usuarios según tus permisos.
+            Introduce tus credenciales internas para gestionar colecciones, contenidos y medios.
           </p>
         </div>
-        <button
-          id="logout-btn"
-          class="self-start rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-rose-500 hover:text-rose-300"
-        >
-          Cerrar sesión
-        </button>
+        <form id="login-form" class="space-y-5">
+          <label class="block text-sm">
+            <span class="mb-1 block font-medium text-slate-200">Usuario</span>
+            <input
+              name="username"
+              type="text"
+              required
+              autocomplete="username"
+              class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+            />
+          </label>
+          <label class="block text-sm">
+            <span class="mb-1 block font-medium text-slate-200">Contraseña</span>
+            <input
+              name="password"
+              type="password"
+              required
+              autocomplete="current-password"
+              class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+            />
+          </label>
+          <button
+            type="submit"
+            class="w-full rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+          >
+            Entrar
+          </button>
+        </form>
+        <p
+          id="login-error"
+          class="hidden rounded-xl border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
+        ></p>
       </div>
+    </section>
 
-      <div class="flex flex-wrap gap-3">
-        <button
-          type="button"
-          class="rounded-lg border border-teal-500/60 bg-teal-500/10 px-4 py-2 text-sm font-medium text-teal-200 transition hover:bg-teal-500/20"
-          data-view="content-types"
-          aria-pressed="true"
-        >
-          Content-type Builder
-        </button>
-        <button
-          type="button"
-          class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-teal-400 hover:text-teal-200"
-          data-view="content-manager"
-          aria-pressed="false"
-        >
-          Content Manager
-        </button>
-        <button
-          type="button"
-          class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-teal-400 hover:text-teal-200"
-          data-view="media-library"
-          aria-pressed="false"
-        >
-          Media Library
-        </button>
-        <button
-          type="button"
-          class="hidden rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-teal-400 hover:text-teal-200"
-          data-view="users"
-          aria-pressed="false"
-          id="user-nav-btn"
-        >
-          Users, Roles & Permissions
-        </button>
-      </div>
+    <section
+      id="dashboard"
+      class="hidden h-full overflow-hidden rounded-3xl bg-slate-950/90 lg:grid lg:grid-cols-[240px_1fr]"
+    >
+      <aside class="hidden flex-col border-r border-slate-800/80 bg-slate-950/95 px-6 py-8 lg:flex">
+        <div class="flex items-center gap-3 pb-8">
+          <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-500/20 text-lg font-semibold text-teal-300">FT</span>
+          <div>
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">FunTeco</p>
+            <p class="text-sm font-semibold text-slate-100">Control Center</p>
+          </div>
+        </div>
+        <nav class="flex flex-1 flex-col gap-2 text-sm font-medium">
+          <button
+            type="button"
+            class="flex items-center gap-3 rounded-xl border border-transparent px-3 py-2 text-left text-slate-200 transition data-[active=true]:border-teal-500/60 data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-200 hover:border-teal-400 hover:text-teal-200"
+            data-view="content-types"
+            aria-pressed="true"
+            data-active="true"
+          >
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900/80 text-base">📦</span>
+            <span>Content-type Builder</span>
+          </button>
+          <button
+            type="button"
+            class="flex items-center gap-3 rounded-xl border border-transparent px-3 py-2 text-left text-slate-200 transition data-[active=true]:border-teal-500/60 data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-200 hover:border-teal-400 hover:text-teal-200"
+            data-view="content-manager"
+            aria-pressed="false"
+          >
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900/80 text-base">🗂️</span>
+            <span>Content Manager</span>
+          </button>
+          <button
+            type="button"
+            class="flex items-center gap-3 rounded-xl border border-transparent px-3 py-2 text-left text-slate-200 transition data-[active=true]:border-teal-500/60 data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-200 hover:border-teal-400 hover:text-teal-200"
+            data-view="media-library"
+            aria-pressed="false"
+          >
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900/80 text-base">🖼️</span>
+            <span>Media Library</span>
+          </button>
+          <button
+            type="button"
+            class="hidden items-center gap-3 rounded-xl border border-transparent px-3 py-2 text-left text-slate-200 transition data-[active=true]:border-teal-500/60 data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-200 hover:border-teal-400 hover:text-teal-200"
+            data-view="users"
+            aria-pressed="false"
+            id="user-nav-btn"
+          >
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900/80 text-base">🛡️</span>
+            <span>Users, Roles &amp; Permissions</span>
+          </button>
+        </nav>
+      </aside>
 
-      <div class="space-y-8">
+      <div class="flex flex-col overflow-y-auto bg-slate-950/60">
+        <header class="border-b border-slate-800/80 bg-slate-950/80 px-6 py-6 shadow-inner shadow-slate-950/40">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-xs uppercase tracking-[0.25em] text-slate-500">Dashboard</p>
+              <h2 class="mt-2 text-2xl font-semibold text-teal-200">
+                Bienvenido, <span id="current-user" class="text-slate-100"></span>
+              </h2>
+              <p class="mt-1 max-w-2xl text-sm text-slate-400">
+                Gestiona tus esquemas de contenido, colecciones publicadas y bibliotecas de medios desde un espacio inspirado en Strapi.
+              </p>
+            </div>
+            <button
+              id="logout-btn"
+              class="inline-flex items-center justify-center self-start rounded-xl border border-slate-800 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-rose-500/70 hover:text-rose-300"
+            >
+              Cerrar sesión
+            </button>
+          </div>
+          <div class="mt-6 flex flex-wrap gap-2 lg:hidden">
+            <button
+              type="button"
+              class="rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm font-medium text-slate-200 transition data-[active=true]:border-teal-500/60 data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-200 hover:border-teal-400 hover:text-teal-200"
+              data-view="content-types"
+              aria-pressed="true"
+              data-active="true"
+            >
+              Content-type Builder
+            </button>
+            <button
+              type="button"
+              class="rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm font-medium text-slate-200 transition data-[active=true]:border-teal-500/60 data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-200 hover:border-teal-400 hover:text-teal-200"
+              data-view="content-manager"
+              aria-pressed="false"
+            >
+              Content Manager
+            </button>
+            <button
+              type="button"
+              class="rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm font-medium text-slate-200 transition data-[active=true]:border-teal-500/60 data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-200 hover:border-teal-400 hover:text-teal-200"
+              data-view="media-library"
+              aria-pressed="false"
+            >
+              Media Library
+            </button>
+            <button
+              type="button"
+              class="hidden rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm font-medium text-slate-200 transition data-[active=true]:border-teal-500/60 data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-200 hover:border-teal-400 hover:text-teal-200"
+              data-view="users"
+              aria-pressed="false"
+              id="user-nav-btn-mobile"
+            >
+              Users, Roles &amp; Permissions
+            </button>
+          </div>
+        </header>
+
+        <div class="flex-1 space-y-10 px-6 py-8">
         <section
           aria-labelledby="content-type-builder"
-          class="space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          class="space-y-8 rounded-3xl border border-slate-800/80 bg-slate-950/70 p-6 shadow-xl shadow-slate-950/50"
           data-view-panel="content-types"
         >
-          <div>
-            <h3 id="content-type-builder" class="text-lg font-semibold text-teal-200">
+          <header class="space-y-3">
+            <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-500">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-teal-500/10 text-base text-teal-300">⚙️</span>
+              <span>Content architecture</span>
+            </div>
+            <h3 id="content-type-builder" class="text-2xl font-semibold text-teal-200">
               Content-type Builder
             </h3>
-            <p class="mt-1 text-sm text-slate-400">
-              Configura colecciones y campos personalizados siguiendo las pautas del panel de Strapi.
+            <p class="max-w-3xl text-sm text-slate-400">
+              Diseña colecciones, campos y estados de publicación con una experiencia visual inspirada en el panel de Strapi.
             </p>
-          </div>
+          </header>
 
-          <form
-            id="content-type-form"
-            class="grid gap-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4 md:grid-cols-2"
-          >
-            <label class="block text-sm md:col-span-2">
-              <span class="mb-1 block font-medium text-slate-300">Nombre visible</span>
-              <input
-                name="displayName"
-                required
-                placeholder="Blog, Programas, Aliados…"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-              />
-            </label>
-            <label class="block text-sm md:col-span-2">
-              <span class="mb-1 block font-medium text-slate-300">Descripción</span>
-              <textarea
-                name="description"
-                rows="2"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-                placeholder="Resume el propósito editorial del tipo de contenido"
-              ></textarea>
-            </label>
-            <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Categoría</span>
-              <input
-                name="category"
-                placeholder="Colecciones personalizadas"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-              />
-            </label>
-            <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Icono</span>
-              <input
-                name="icon"
-                placeholder="database, calendar, book…"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-              />
-            </label>
-            <label class="flex items-center gap-2 text-sm text-slate-300 md:col-span-2">
-              <input
-                type="checkbox"
-                name="draftAndPublish"
-                checked
-                class="h-4 w-4 rounded border border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/40"
-              />
-              <span>Activar Draft &amp; Publish</span>
-            </label>
-            <div class="md:col-span-2 flex flex-wrap items-center gap-3">
-              <button
-                type="submit"
-                class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+          <div class="grid gap-6 xl:grid-cols-[minmax(0,420px)_1fr]">
+            <div class="space-y-6">
+              <form
+                id="content-type-form"
+                class="space-y-5 rounded-2xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-inner shadow-slate-950/30"
               >
-                Crear tipo de contenido
-              </button>
-              <p
-                id="content-type-feedback"
-                class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
-              ></p>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Crear colección</p>
+                <label class="block text-sm">
+                  <span class="mb-1 block font-medium text-slate-200">Nombre visible</span>
+                  <input
+                    name="displayName"
+                    required
+                    placeholder="Blog, Programas, Aliados…"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                  />
+                </label>
+                <label class="block text-sm">
+                  <span class="mb-1 block font-medium text-slate-200">Descripción</span>
+                  <textarea
+                    name="description"
+                    rows="2"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    placeholder="Resume el propósito editorial del tipo de contenido"
+                  ></textarea>
+                </label>
+                <div class="grid gap-4 md:grid-cols-2">
+                  <label class="block text-sm">
+                    <span class="mb-1 block font-medium text-slate-200">Categoría</span>
+                    <input
+                      name="category"
+                      placeholder="Colecciones personalizadas"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    />
+                  </label>
+                  <label class="block text-sm">
+                    <span class="mb-1 block font-medium text-slate-200">Icono</span>
+                    <input
+                      name="icon"
+                      placeholder="database, calendar, book…"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    />
+                  </label>
+                </div>
+                <label class="flex items-center gap-2 rounded-xl border border-slate-800/70 bg-slate-950/60 p-3 text-sm text-slate-200">
+                  <input
+                    type="checkbox"
+                    name="draftAndPublish"
+                    checked
+                    class="h-4 w-4 rounded border border-slate-700 bg-slate-950 text-teal-500 focus:ring-teal-500/40"
+                  />
+                  <span>Activar Draft &amp; Publish</span>
+                </label>
+                <div class="flex flex-wrap items-center gap-3">
+                  <button
+                    type="submit"
+                    class="rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+                  >
+                    Crear tipo de contenido
+                  </button>
+                  <p
+                    id="content-type-feedback"
+                    class="hidden rounded-xl border border-slate-800/70 bg-slate-950/60 px-3 py-2 text-sm"
+                  ></p>
+                </div>
+              </form>
+
+              <form
+                id="content-field-form"
+                class="grid gap-5 rounded-2xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-inner shadow-slate-950/30 md:grid-cols-2 xl:grid-cols-4"
+              >
+                <p class="md:col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-500 xl:col-span-4">
+                  Añadir campos personalizados
+                </p>
+                <label class="block text-sm md:col-span-2 xl:col-span-2">
+                  <span class="mb-1 block font-medium text-slate-200">Tipo de contenido</span>
+                  <select
+                    name="uid"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                  ></select>
+                </label>
+                <label class="block text-sm">
+                  <span class="mb-1 block font-medium text-slate-200">Nombre del campo</span>
+                  <input
+                    name="name"
+                    required
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                  />
+                </label>
+                <label class="block text-sm">
+                  <span class="mb-1 block font-medium text-slate-200">Tipo</span>
+                  <select
+                    name="type"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                  >
+                    <option value="string">Texto corto</option>
+                    <option value="text">Texto largo</option>
+                    <option value="richtext">Rich text</option>
+                    <option value="uid">UID automático</option>
+                    <option value="media">Media</option>
+                    <option value="enumeration">Enumeración</option>
+                    <option value="json">JSON</option>
+                    <option value="date">Fecha</option>
+                    <option value="datetime">Fecha y hora</option>
+                    <option value="boolean">Booleano</option>
+                    <option value="number">Número</option>
+                    <option value="relation">Relación</option>
+                  </select>
+                </label>
+                <label class="flex items-center gap-2 rounded-xl border border-slate-800/70 bg-slate-950/60 p-3 text-sm text-slate-200 md:col-span-2 xl:col-span-4">
+                  <input
+                    type="checkbox"
+                    name="required"
+                    class="h-4 w-4 rounded border border-slate-700 bg-slate-950 text-teal-500 focus:ring-teal-500/40"
+                  />
+                  <span>Campo obligatorio</span>
+                </label>
+                <div class="md:col-span-2 flex flex-wrap items-center gap-3 xl:col-span-4">
+                  <button
+                    type="submit"
+                    class="rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+                  >
+                    Añadir campo
+                  </button>
+                  <p
+                    id="content-field-feedback"
+                    class="hidden rounded-xl border border-slate-800/70 bg-slate-950/60 px-3 py-2 text-sm"
+                  ></p>
+                </div>
+              </form>
             </div>
-          </form>
-
-          <form
-            id="content-field-form"
-            class="grid gap-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4 md:grid-cols-4"
-          >
-            <label class="block text-sm md:col-span-2">
-              <span class="mb-1 block font-medium text-slate-300">Tipo de contenido</span>
-              <select
-                name="uid"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-              ></select>
-            </label>
-            <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Nombre del campo</span>
-              <input
-                name="name"
-                required
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-              />
-            </label>
-            <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Tipo</span>
-              <select
-                name="type"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-              >
-                <option value="string">Texto corto</option>
-                <option value="text">Texto largo</option>
-                <option value="richtext">Rich text</option>
-                <option value="uid">UID automático</option>
-                <option value="media">Media</option>
-                <option value="enumeration">Enumeración</option>
-                <option value="json">JSON</option>
-                <option value="date">Fecha</option>
-                <option value="datetime">Fecha y hora</option>
-                <option value="boolean">Booleano</option>
-                <option value="number">Número</option>
-                <option value="relation">Relación</option>
-              </select>
-            </label>
-            <label class="flex items-center gap-2 text-sm text-slate-300 md:col-span-2">
-              <input
-                type="checkbox"
-                name="required"
-                class="h-4 w-4 rounded border border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/40"
-              />
-              <span>Campo obligatorio</span>
-            </label>
-            <div class="md:col-span-4 flex flex-wrap items-center gap-3">
-              <button
-                type="submit"
-                class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
-              >
-                Añadir campo
-              </button>
-              <p
-                id="content-field-feedback"
-                class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
-              ></p>
+            <div class="space-y-4">
+              <div class="rounded-2xl border border-dashed border-slate-800/60 bg-slate-950/50 p-4 text-sm text-slate-400">
+                Agrupa y visualiza tus colecciones. Los campos se muestran como tarjetas listas para drag &amp; drop.
+              </div>
+              <div id="content-type-list" class="grid gap-4 text-sm text-slate-200"></div>
             </div>
-          </form>
-
-          <div class="space-y-4">
-            <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
-              Colecciones configuradas
-            </h4>
-            <div id="content-type-list" class="space-y-4 text-sm text-slate-200"></div>
           </div>
         </section>
 
         <section
           aria-labelledby="content-manager"
-          class="hidden space-y-10 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          class="hidden space-y-10 rounded-3xl border border-slate-800/80 bg-slate-950/70 p-6 shadow-xl shadow-slate-950/50"
           data-view-panel="content-manager"
         >
-          <div>
-            <h3 id="content-manager" class="text-lg font-semibold text-teal-200">
+          <header class="space-y-3">
+            <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-500">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-teal-500/10 text-base text-teal-300">🧱</span>
+              <span>Workflow</span>
+            </div>
+            <h3 id="content-manager" class="text-2xl font-semibold text-teal-200">
               Content Manager
             </h3>
-            <p class="mt-1 text-sm text-slate-400">
-              Gestiona entradas para secciones, equipo y eventos con flujos de borradores y publicación.
+            <p class="max-w-3xl text-sm text-slate-400">
+              Gestiona entradas para secciones, equipo y eventos con flujos de borradores, publicación y reordenamiento por drag &amp; drop.
             </p>
-          </div>
+          </header>
 
-          <div class="space-y-10">
-            <div class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
-              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
-                Secciones destacadas
-              </h4>
+          <div class="space-y-12">
+            <div class="space-y-6 rounded-2xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-inner shadow-slate-950/30">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h4 class="text-lg font-semibold text-slate-100">Secciones destacadas</h4>
+                  <p class="text-xs text-slate-500">Crea bloques editoriales y reorganízalos visualmente.</p>
+                </div>
+                <span class="hidden rounded-full border border-slate-800/70 px-3 py-1 text-xs text-slate-500 lg:inline">Arrastra las tarjetas de la derecha</span>
+              </div>
               <form id="section-form" class="space-y-4">
                 <input type="hidden" name="sectionId" />
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Título</span>
+                  <span class="mb-1 block font-medium text-slate-200">Título</span>
                   <input
                     name="title"
                     type="text"
                     required
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   />
                 </label>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Contenido</span>
+                  <span class="mb-1 block font-medium text-slate-200">Contenido</span>
                   <textarea
                     name="content"
                     required
                     rows="4"
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   ></textarea>
                 </label>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Estado</span>
+                  <span class="mb-1 block font-medium text-slate-200">Estado</span>
                   <select
                     name="status"
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   >
                     <option value="draft">Borrador</option>
                     <option value="published">Publicado</option>
@@ -298,115 +384,121 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
                 <div class="flex items-center gap-3">
                   <button
                     type="submit"
-                    class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+                    class="rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
                   >
                     Guardar sección
                   </button>
                   <button
                     type="button"
                     id="cancel-edit"
-                    class="hidden rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 transition hover:border-slate-500"
+                    class="hidden rounded-xl border border-slate-800 px-3 py-2 text-xs font-medium text-slate-200 transition hover:border-slate-500"
                   >
                     Cancelar edición
                   </button>
                 </div>
                 <p
                   id="section-feedback"
-                  class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+                  class="hidden rounded-xl border border-slate-800/70 bg-slate-950/60 px-3 py-2 text-sm"
                 ></p>
               </form>
-
-              <ul id="section-list" class="space-y-3 text-sm text-slate-200"></ul>
+              <div class="rounded-2xl border border-dashed border-slate-800/60 bg-slate-950/50 p-4 text-sm text-slate-400">
+                Arrastra las tarjetas para organizar el orden en que aparecen en la web.
+              </div>
+              <ul id="section-list" class="grid gap-3 text-sm text-slate-200"></ul>
             </div>
 
-            <div class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
-              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
-                Equipo FunTeco
-              </h4>
+            <div class="space-y-6 rounded-2xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-inner shadow-slate-950/30">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h4 class="text-lg font-semibold text-slate-100">Equipo FunTeco</h4>
+                  <p class="text-xs text-slate-500">Gestiona bios, focos y redes sociales del equipo.</p>
+                </div>
+                <span class="hidden rounded-full border border-slate-800/70 px-3 py-1 text-xs text-slate-500 lg:inline">Arrastra los perfiles para priorizarlos</span>
+              </div>
               <form id="team-form" class="space-y-4">
                 <input type="hidden" name="memberId" />
                 <div class="grid gap-4 md:grid-cols-2">
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Nombre completo</span>
+                    <span class="mb-1 block font-medium text-slate-200">Nombre completo</span>
                     <input
                       name="name"
                       required
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     />
                   </label>
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Rol en el equipo</span>
+                    <span class="mb-1 block font-medium text-slate-200">Rol en el equipo</span>
                     <input
                       name="role"
                       required
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     />
                   </label>
                 </div>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">URL de la imagen</span>
+                  <span class="mb-1 block font-medium text-slate-200">URL de la imagen</span>
                   <input
                     name="image"
                     required
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   />
                 </label>
                 <div class="grid gap-4 md:grid-cols-2">
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Extracto corto</span>
+                    <span class="mb-1 block font-medium text-slate-200">Extracto corto</span>
                     <textarea
                       name="shortBio"
                       rows="3"
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     ></textarea>
                   </label>
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Área de enfoque</span>
+                    <span class="mb-1 block font-medium text-slate-200">Área de enfoque</span>
                     <input
                       name="focus"
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     />
                   </label>
                 </div>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Biografía (una línea por párrafo)</span>
+                  <span class="mb-1 block font-medium text-slate-200">Biografía (una línea por párrafo)</span>
                   <textarea
                     name="bio"
                     rows="4"
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   ></textarea>
                 </label>
                 <div class="grid gap-4 md:grid-cols-2">
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Experticias (separa con comas)</span>
+                    <span class="mb-1 block font-medium text-slate-200">Experticias (separa con comas)</span>
                     <input
                       name="expertise"
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     />
                   </label>
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Logros destacados (una línea por logro)</span>
+                    <span class="mb-1 block font-medium text-slate-200">Logros destacados (una línea por logro)</span>
                     <textarea
                       name="highlights"
                       rows="3"
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     ></textarea>
                   </label>
                 </div>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Redes sociales (JSON)</span>
+                  <span class="mb-1 block font-medium text-slate-200">Redes sociales (JSON)</span>
                   <textarea
                     name="socials"
                     rows="3"
                     placeholder='[{"platform":"instagram","label":"Instagram","url":"https://instagram.com"}]'
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   ></textarea>
                 </label>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Estado</span>
+                  <span class="mb-1 block font-medium text-slate-200">Estado</span>
                   <select
                     name="status"
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   >
                     <option value="draft">Borrador</option>
                     <option value="published">Publicado</option>
@@ -415,21 +507,21 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
                 <div class="flex flex-wrap items-center gap-3">
                   <button
                     type="submit"
-                    class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+                    class="rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
                   >
                     Guardar integrante
                   </button>
                   <button
                     type="button"
                     id="cancel-team-edit"
-                    class="hidden rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 transition hover:border-slate-500"
+                    class="hidden rounded-xl border border-slate-800 px-3 py-2 text-xs font-medium text-slate-200 transition hover:border-slate-500"
                   >
                     Cancelar edición
                   </button>
                 </div>
                 <p
                   id="team-feedback"
-                  class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+                  class="hidden rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm"
                 ></p>
               </form>
 
@@ -438,9 +530,9 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
                   <h5 class="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Perfiles activos
                   </h5>
-                  <ul id="team-list" class="space-y-3 text-sm text-slate-200"></ul>
+                  <ul id="team-list" class="grid gap-3 text-sm text-slate-200"></ul>
                 </div>
-                <div class="space-y-4 rounded-lg border border-slate-800 bg-slate-900/60 p-4">
+                <div class="space-y-4 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4">
                   <h5 class="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Estado editorial
                   </h5>
@@ -462,76 +554,80 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
               </div>
             </div>
 
-            <div class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
-              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
-                Agenda y eventos
-              </h4>
+            <div class="space-y-6 rounded-2xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-inner shadow-slate-950/30">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h4 class="text-lg font-semibold text-slate-100">Agenda y eventos</h4>
+                  <p class="text-xs text-slate-500">Controla fechas, ubicaciones y etiquetas clave.</p>
+                </div>
+                <span class="hidden rounded-full border border-slate-800/70 px-3 py-1 text-xs text-slate-500 lg:inline">Arrastra la agenda para priorizarla</span>
+              </div>
               <form id="event-form" class="space-y-4">
                 <input type="hidden" name="eventId" />
                 <div class="grid gap-4 md:grid-cols-2">
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Título</span>
+                    <span class="mb-1 block font-medium text-slate-200">Título</span>
                     <input
                       name="title"
                       required
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     />
                   </label>
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Fecha</span>
+                    <span class="mb-1 block font-medium text-slate-200">Fecha</span>
                     <input
                       name="date"
                       type="date"
                       required
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     />
                   </label>
                 </div>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Descripción breve</span>
+                  <span class="mb-1 block font-medium text-slate-200">Descripción breve</span>
                   <textarea
                     name="shortDescription"
                     rows="3"
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   ></textarea>
                 </label>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Descripción completa (una línea por párrafo)</span>
+                  <span class="mb-1 block font-medium text-slate-200">Descripción completa (una línea por párrafo)</span>
                   <textarea
                     name="description"
                     rows="4"
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   ></textarea>
                 </label>
                 <div class="grid gap-4 md:grid-cols-2">
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">Ubicación</span>
+                    <span class="mb-1 block font-medium text-slate-200">Ubicación</span>
                     <input
                       name="location"
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     />
                   </label>
                   <label class="block text-sm">
-                    <span class="mb-1 block font-medium text-slate-300">URL de imagen</span>
+                    <span class="mb-1 block font-medium text-slate-200">URL de imagen</span>
                     <input
                       name="image"
-                      class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                     />
                   </label>
                 </div>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Etiquetas</span>
+                  <span class="mb-1 block font-medium text-slate-200">Etiquetas</span>
                   <input
                     name="tags"
                     placeholder="separa con comas"
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   />
                 </label>
                 <label class="block text-sm">
-                  <span class="mb-1 block font-medium text-slate-300">Estado</span>
+                  <span class="mb-1 block font-medium text-slate-200">Estado</span>
                   <select
                     name="status"
-                    class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
                   >
                     <option value="draft">Borrador</option>
                     <option value="published">Publicado</option>
@@ -540,21 +636,21 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
                 <div class="flex flex-wrap items-center gap-3">
                   <button
                     type="submit"
-                    class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+                    class="rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
                   >
                     Guardar evento
                   </button>
                   <button
                     type="button"
                     id="cancel-event-edit"
-                    class="hidden rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 transition hover:border-slate-500"
+                    class="hidden rounded-xl border border-slate-800 px-3 py-2 text-xs font-medium text-slate-200 transition hover:border-slate-500"
                   >
                     Cancelar edición
                   </button>
                 </div>
                 <p
                   id="event-feedback"
-                  class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+                  class="hidden rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm"
                 ></p>
               </form>
 
@@ -563,9 +659,9 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
                   <h5 class="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Agenda registrada
                   </h5>
-                  <ul id="event-list" class="space-y-3 text-sm text-slate-200"></ul>
+                  <ul id="event-list" class="grid gap-3 text-sm text-slate-200"></ul>
                 </div>
-                <div class="space-y-4 rounded-lg border border-slate-800 bg-slate-900/60 p-4">
+                <div class="space-y-4 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-4">
                   <h5 class="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Vista previa rápida
                   </h5>
@@ -591,32 +687,39 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
 
         <section
           aria-labelledby="media-library-title"
-          class="hidden space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          class="hidden space-y-8 rounded-3xl border border-slate-800/80 bg-slate-950/70 p-6 shadow-xl shadow-slate-950/50"
           data-view-panel="media-library"
         >
-          <div>
-            <h3 id="media-library-title" class="text-lg font-semibold text-teal-200">
+          <header class="space-y-3">
+            <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-500">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-teal-500/10 text-base text-teal-300">🗃️</span>
+              <span>Assets</span>
+            </div>
+            <h3 id="media-library-title" class="text-2xl font-semibold text-teal-200">
               Media Library
             </h3>
-            <p class="mt-1 text-sm text-slate-400">
+            <p class="max-w-3xl text-sm text-slate-400">
               Registra imágenes, documentos y recursos multimedia para reutilizarlos en tus colecciones.
             </p>
-          </div>
+          </header>
 
-          <form id="media-upload-form" class="grid gap-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4 md:grid-cols-2">
+          <form
+            id="media-upload-form"
+            class="grid gap-4 rounded-2xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-inner shadow-slate-950/30 md:grid-cols-2"
+          >
             <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Nombre</span>
+              <span class="mb-1 block font-medium text-slate-200">Nombre</span>
               <input
                 name="name"
                 placeholder="Banner convocatoria"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
               />
             </label>
             <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Tipo</span>
+              <span class="mb-1 block font-medium text-slate-200">Tipo</span>
               <select
                 name="type"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
               >
                 <option value="image">Imagen</option>
                 <option value="video">Video</option>
@@ -624,32 +727,32 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
               </select>
             </label>
             <label class="block text-sm md:col-span-2">
-              <span class="mb-1 block font-medium text-slate-300">URL pública</span>
+              <span class="mb-1 block font-medium text-slate-200">URL pública</span>
               <input
                 name="url"
                 required
                 placeholder="https://..."
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
               />
             </label>
             <label class="block text-sm md:col-span-2">
-              <span class="mb-1 block font-medium text-slate-300">Texto alternativo</span>
+              <span class="mb-1 block font-medium text-slate-200">Texto alternativo</span>
               <input
                 name="altText"
                 placeholder="Describe el contenido para lectores de pantalla"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
               />
             </label>
             <div class="md:col-span-2 flex flex-wrap items-center gap-3">
               <button
                 type="submit"
-                class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+                class="rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
               >
                 Registrar archivo
               </button>
               <p
                 id="media-feedback"
-                class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+                class="hidden rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm"
               ></p>
             </div>
           </form>
@@ -658,47 +761,54 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
             <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
               Biblioteca disponible
             </h4>
-            <ul id="media-library-list" class="space-y-3 text-sm text-slate-200"></ul>
+            <ul id="media-library-list" class="grid gap-3 text-sm text-slate-200"></ul>
           </div>
         </section>
         <section
           id="user-management"
-          class="hidden space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          class="hidden space-y-8 rounded-3xl border border-slate-800/80 bg-slate-950/70 p-6 shadow-xl shadow-slate-950/50"
           aria-labelledby="user-manager"
           data-view-panel="users"
         >
-          <div>
-            <h3 id="user-manager" class="text-lg font-semibold text-teal-200">
-              Users, Roles & Permissions
+          <header class="space-y-3">
+            <div class="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-500">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-teal-500/10 text-base text-teal-300">🛡️</span>
+              <span>Security</span>
+            </div>
+            <h3 id="user-manager" class="text-2xl font-semibold text-teal-200">
+              Users, Roles &amp; Permissions
             </h3>
-            <p class="mt-1 text-sm text-slate-400">
+            <p class="max-w-3xl text-sm text-slate-400">
               Administra cuentas del dashboard, asigna roles y revisa las capacidades permitidas por cada perfil.
             </p>
-          </div>
+          </header>
 
-          <form id="user-form" class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+          <form
+            id="user-form"
+            class="space-y-4 rounded-2xl border border-slate-800/70 bg-slate-950/70 p-6 shadow-inner shadow-slate-950/30"
+          >
             <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Usuario</span>
+              <span class="mb-1 block font-medium text-slate-200">Usuario</span>
               <input
                 name="username"
                 required
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
               />
             </label>
             <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Contraseña</span>
+              <span class="mb-1 block font-medium text-slate-200">Contraseña</span>
               <input
                 name="password"
                 type="password"
                 required
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
               />
             </label>
             <label class="block text-sm">
-              <span class="mb-1 block font-medium text-slate-300">Rol</span>
+              <span class="mb-1 block font-medium text-slate-200">Rol</span>
               <select
                 name="role"
-                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
               >
                 {ROLES.map((role) => (
                   <option value={role}>{role}</option>
@@ -707,17 +817,17 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
             </label>
             <button
               type="submit"
-              class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+              class="rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
             >
               Crear usuario
             </button>
             <p
               id="user-feedback"
-              class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+              class="hidden rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm"
             ></p>
           </form>
 
-          <ul id="user-list" class="space-y-3 text-sm text-slate-200"></ul>
+          <ul id="user-list" class="grid gap-3 text-sm text-slate-200"></ul>
         </section>
       </div>
     </section>
