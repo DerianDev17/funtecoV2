@@ -16,7 +16,7 @@ const { event } = Astro.props as { event: Event };
 const pageTitle = event.title;
 const description = `${event.shortDescription} - ${event.formattedDate} en ${event.location}`;
 ---
-<BaseLayout title={pageTitle} description={description} canonical={`https://funteco.org/eventos/${event.slug}`}>
+<BaseLayout title={pageTitle} description={description} canonical={`https://www.fundaciontejiendoconocimiento.com/eventos/${event.slug}`}>
   <Header current="/eventos" />
   <main class="bg-gradient-to-br from-neutral via-white to-accent-blush/30">
     <section class="relative py-20">
