@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { events } from '../../data/events';
+import type { Event } from '../../data/events';
+
+export async function getStaticPaths() {
+  return events.map((event) => ({
+    params: { slug: event.slug },
+    props: { event }
+  }));
+}
+
+const { event } = Astro.props as { event: Event };
+const pageTitle = event.title;
+const description = `${event.shortDescription} - ${event.formattedDate} en ${event.location}`;
+---
+<BaseLayout title={pageTitle} description={description} canonical={`https://funteco.org/eventos/${event.slug}`}>
+  <Header current="/eventos" />
+  <main class="bg-gradient-to-br from-neutral via-white to-accent-blush/30">
+    <section class="relative py-20">
+      <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-accent-flamingo/40 to-transparent"></div>
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="grid gap-10 lg:grid-cols-5 items-center">
+          <div class="lg:col-span-3 space-y-6">
+            <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary-dark">
+              Evento Funteco
+              <span class="inline-flex h-2 w-2 rounded-full bg-panafrican-red animate-pulse" aria-hidden="true"></span>
+            </span>
+            <h1 class="text-4xl sm:text-5xl font-bold text-primary-dark leading-tight">{event.title}</h1>
+            <p class="text-lg text-neutral-black/80 leading-relaxed">{event.shortDescription}</p>
+            <dl class="grid sm:grid-cols-2 gap-4 text-sm text-neutral-black/70">
+              <div class="rounded-xl bg-white/80 p-4 shadow-sm border border-accent-blush/40">
+                <dt class="font-semibold text-primary-dark">Fecha</dt>
+                <dd>{event.formattedDate}</dd>
+              </div>
+              <div class="rounded-xl bg-white/80 p-4 shadow-sm border border-accent-blush/40">
+                <dt class="font-semibold text-primary-dark">Lugar</dt>
+                <dd>{event.location}</dd>
+              </div>
+            </dl>
+            <div class="flex flex-wrap gap-2">
+              {event.tags.map((tag) => (
+                <span class="inline-flex items-center rounded-full bg-panafrican-green/20 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-panafrican-green">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="lg:col-span-2">
+            <div class="rounded-3xl overflow-hidden shadow-xl border-4 border-white/70">
+              <img src={event.image} alt={`Personas participando en ${event.title}`} class="w-full h-full object-cover" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <h2 class="text-2xl font-semibold text-primary-dark">¿Qué viviremos?</h2>
+        <div class="space-y-6 text-base leading-relaxed text-neutral-black/80">
+          {event.description.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </div>
+        <div class="rounded-3xl bg-white/90 border border-accent-blush/40 p-6 sm:p-8 shadow-lg">
+          <h3 class="text-xl font-semibold text-primary-dark mb-4">Reserva tu cupo</h3>
+          <p class="text-sm text-neutral-black/70 mb-6">
+            Escríbenos a <a href="mailto:contacto@funteco.org" class="text-primary-dark underline">contacto@funteco.org</a> para recibir la agenda completa y asegurar tu participación.
+          </p>
+          <a href="/contacto" class="inline-flex items-center justify-center rounded-full bg-primary-dark px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-primary">
+            Ir al formulario de contacto
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

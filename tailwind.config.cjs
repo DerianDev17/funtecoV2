@@ -7,9 +7,23 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#2563eb', // azul principal
-          light: '#3b82f6',
-          dark: '#1e40af'
+          DEFAULT: '#6F6AC3',
+          light: '#EBABC5',
+          dark: '#82007C'
+        },
+        accent: {
+          DEFAULT: '#F47AAA',
+          flamingo: '#F58FB6',
+          blush: '#EBABC5'
+        },
+        neutral: {
+          DEFAULT: '#F2DFC8',
+          black: '#000000'
+        },
+        panafrican: {
+          red: '#E31B23',
+          green: '#12853F',
+          black: '#000000'
         }
       }
     }
