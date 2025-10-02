@@ -37,7 +37,7 @@ funteco_astro/
 
 ## Requisitos
 
-Para ejecutar este proyecto necesitas tener instalado **Node.js** (versión 18 o superior) y **npm**. Si planeas realizar pruebas, también se recomienda instalar `vitest` globalmente o ejecutarlo mediante los scripts.
+Para ejecutar este proyecto necesitas tener instalado **Node.js** (versión 18 o superior) y **pnpm**. Si planeas realizar pruebas, también se recomienda instalar `vitest` globalmente o ejecutarlo mediante los scripts.
 
 ## Instalación
 
@@ -51,7 +51,7 @@ Para ejecutar este proyecto necesitas tener instalado **Node.js** (versión 18 o
 2. Instala las dependencias:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
    > **Nota:** Si no tienes acceso a internet en este entorno, revisa la sección de dependencias del `package.json` para asegurarte de que las versiones sean correctas. Puedes instalar paquetes locales o usar un registro privado.
@@ -60,10 +60,14 @@ Para ejecutar este proyecto necesitas tener instalado **Node.js** (versión 18 o
 
 Una vez instaladas las dependencias, puedes ejecutar los siguientes comandos:
 
-- `npm run dev` – Inicia el servidor de desarrollo en `http://localhost:3000` con recarga en caliente.
-- `npm run build` – Genera una versión estática optimizada en la carpeta `dist/` lista para desplegar en Vercel, Netlify u otro hosting estático.
-- `npm run preview` – Previsualiza el sitio de producción generado en `dist/`.
-- `npm run test` – Ejecuta las pruebas de Vitest definidas en `src/tests/design.test.js`.
+- `pnpm dev` – Inicia el servidor de desarrollo en `http://localhost:3000` con recarga en caliente.
+- `pnpm build` – Genera una versión estática optimizada en la carpeta `dist/` lista para desplegar en Vercel, Netlify u otro hosting estático.
+- `pnpm preview` – Previsualiza el sitio de producción generado en `dist/`.
+- `pnpm test` – Ejecuta la suite de Vitest, incluyendo las pruebas del módulo administrativo.
+
+## Documentación del panel administrativo
+
+En `docs/strapi-admin.md` encontrarás un resumen de los módulos inspirados en Strapi (Content-type Builder, Content Manager, Media Library y Users, Roles & Permissions), junto con detalles sobre personalización y pruebas.
 
 ## Buenas prácticas y próximos pasos
 
