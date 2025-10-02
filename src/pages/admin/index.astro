@@ -65,10 +65,47 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
         </button>
       </div>
 
-      <div class="grid gap-8 lg:grid-cols-2">
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="button"
+          class="rounded-lg border border-teal-500/60 bg-teal-500/10 px-4 py-2 text-sm font-medium text-teal-200 transition hover:bg-teal-500/20"
+          data-view="content"
+          aria-pressed="true"
+        >
+          Contenido
+        </button>
+        <button
+          type="button"
+          class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-teal-400 hover:text-teal-200"
+          data-view="team"
+          aria-pressed="false"
+        >
+          Equipo
+        </button>
+        <button
+          type="button"
+          class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-teal-400 hover:text-teal-200"
+          data-view="events"
+          aria-pressed="false"
+        >
+          Eventos
+        </button>
+        <button
+          type="button"
+          class="hidden rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-teal-400 hover:text-teal-200"
+          data-view="users"
+          aria-pressed="false"
+          id="user-nav-btn"
+        >
+          Gestión de usuarios y roles
+        </button>
+      </div>
+
+      <div class="space-y-8">
         <section
           aria-labelledby="content-manager"
           class="space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          data-view-panel="content"
         >
           <div>
             <h3 id="content-manager" class="text-lg font-semibold text-teal-200">
@@ -134,9 +171,332 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
         </section>
 
         <section
+          class="hidden space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          aria-labelledby="team-manager"
+          data-view-panel="team"
+        >
+          <div>
+            <h3 id="team-manager" class="text-lg font-semibold text-teal-200">
+              Equipo FunTeco
+            </h3>
+            <p class="mt-1 text-sm text-slate-400">
+              Actualiza perfiles del equipo, guarda borradores y comparte la historia de cada integrante.
+            </p>
+          </div>
+
+          <form id="team-form" class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+            <input type="hidden" name="memberId" />
+            <div class="grid gap-4 md:grid-cols-2">
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Nombre completo</span>
+                <input
+                  name="name"
+                  required
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Rol en el equipo</span>
+                <input
+                  name="role"
+                  required
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Imagen (URL)</span>
+                <input
+                  name="image"
+                  type="url"
+                  placeholder="https://..."
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Enfoque principal</span>
+                <input
+                  name="focus"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+            </div>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Biografía corta</span>
+              <textarea
+                name="shortBio"
+                rows="3"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              ></textarea>
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Biografía extendida</span>
+              <textarea
+                name="bio"
+                rows="4"
+                placeholder="Escribe cada párrafo en una nueva línea"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              ></textarea>
+            </label>
+            <div class="grid gap-4 md:grid-cols-2">
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Áreas de experiencia</span>
+                <input
+                  name="expertise"
+                  placeholder="separa con comas"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Logros destacados</span>
+                <input
+                  name="highlights"
+                  placeholder="separa con comas"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+            </div>
+            <fieldset class="grid gap-4 rounded-lg border border-slate-800 p-4 md:grid-cols-2">
+              <legend class="px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Redes sociales
+              </legend>
+              <label class="block text-xs">
+                <span class="mb-1 block font-medium text-slate-300">Instagram</span>
+                <input
+                  name="social-instagram"
+                  type="url"
+                  placeholder="https://instagram.com/..."
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-xs">
+                <span class="mb-1 block font-medium text-slate-300">Facebook</span>
+                <input
+                  name="social-facebook"
+                  type="url"
+                  placeholder="https://facebook.com/..."
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-xs">
+                <span class="mb-1 block font-medium text-slate-300">LinkedIn</span>
+                <input
+                  name="social-linkedin"
+                  type="url"
+                  placeholder="https://linkedin.com/in/..."
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-xs">
+                <span class="mb-1 block font-medium text-slate-300">Sitio web o portafolio</span>
+                <input
+                  name="social-web"
+                  type="url"
+                  placeholder="https://..."
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+            </fieldset>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Estado</span>
+              <select
+                name="status"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              >
+                <option value="draft">Borrador</option>
+                <option value="published">Publicado</option>
+              </select>
+            </label>
+            <div class="flex flex-wrap items-center gap-3">
+              <button
+                type="submit"
+                class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+              >
+                Guardar integrante
+              </button>
+              <button
+                type="button"
+                id="cancel-team-edit"
+                class="hidden rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 transition hover:border-slate-500"
+              >
+                Cancelar edición
+              </button>
+            </div>
+            <p
+              id="team-feedback"
+              class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+            ></p>
+          </form>
+
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="space-y-3">
+              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
+                Integrantes registrados
+              </h4>
+              <ul id="team-list" class="space-y-3 text-sm text-slate-200"></ul>
+            </div>
+            <div class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
+                Vista previa rápida
+              </h4>
+              <div class="space-y-3">
+                <div>
+                  <h5 class="text-xs font-semibold uppercase tracking-wide text-amber-300">
+                    Borradores
+                  </h5>
+                  <div id="team-preview-draft" class="mt-2 space-y-2 text-xs text-slate-300"></div>
+                </div>
+                <div>
+                  <h5 class="text-xs font-semibold uppercase tracking-wide text-emerald-300">
+                    Publicados
+                  </h5>
+                  <div id="team-preview-published" class="mt-2 space-y-2 text-xs text-slate-300"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="hidden space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          aria-labelledby="event-manager"
+          data-view-panel="events"
+        >
+          <div>
+            <h3 id="event-manager" class="text-lg font-semibold text-teal-200">
+              Eventos y actividades
+            </h3>
+            <p class="mt-1 text-sm text-slate-400">
+              Programa talleres, ferias y encuentros manteniendo una vista previa antes de publicar.
+            </p>
+          </div>
+
+          <form id="event-form" class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+            <input type="hidden" name="eventId" />
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Título del evento</span>
+              <input
+                name="title"
+                required
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              />
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Descripción corta</span>
+              <textarea
+                name="shortDescription"
+                rows="3"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              ></textarea>
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Descripción completa</span>
+              <textarea
+                name="description"
+                rows="4"
+                placeholder="Redacta cada bloque en una nueva línea"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              ></textarea>
+            </label>
+            <div class="grid gap-4 md:grid-cols-2">
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Fecha</span>
+                <input
+                  name="date"
+                  type="date"
+                  required
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Ubicación</span>
+                <input
+                  name="location"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Imagen (URL)</span>
+                <input
+                  name="image"
+                  type="url"
+                  placeholder="https://..."
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="mb-1 block font-medium text-slate-300">Etiquetas</span>
+                <input
+                  name="tags"
+                  placeholder="separa con comas"
+                  class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+                />
+              </label>
+            </div>
+            <label class="block text-sm">
+              <span class="mb-1 block font-medium text-slate-300">Estado</span>
+              <select
+                name="status"
+                class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
+              >
+                <option value="draft">Borrador</option>
+                <option value="published">Publicado</option>
+              </select>
+            </label>
+            <div class="flex flex-wrap items-center gap-3">
+              <button
+                type="submit"
+                class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
+              >
+                Guardar evento
+              </button>
+              <button
+                type="button"
+                id="cancel-event-edit"
+                class="hidden rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 transition hover:border-slate-500"
+              >
+                Cancelar edición
+              </button>
+            </div>
+            <p
+              id="event-feedback"
+              class="hidden rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm"
+            ></p>
+          </form>
+
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="space-y-3">
+              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
+                Agenda registrada
+              </h4>
+              <ul id="event-list" class="space-y-3 text-sm text-slate-200"></ul>
+            </div>
+            <div class="space-y-4 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
+                Vista previa rápida
+              </h4>
+              <div class="space-y-3">
+                <div>
+                  <h5 class="text-xs font-semibold uppercase tracking-wide text-amber-300">
+                    Borradores
+                  </h5>
+                  <div id="event-preview-draft" class="mt-2 space-y-2 text-xs text-slate-300"></div>
+                </div>
+                <div>
+                  <h5 class="text-xs font-semibold uppercase tracking-wide text-emerald-300">
+                    Publicados
+                  </h5>
+                  <div id="event-preview-published" class="mt-2 space-y-2 text-xs text-slate-300"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
           id="user-management"
           class="hidden space-y-6 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
           aria-labelledby="user-manager"
+          data-view-panel="users"
         >
           <div>
             <h3 id="user-manager" class="text-lg font-semibold text-teal-200">
