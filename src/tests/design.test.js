@@ -8,14 +8,14 @@ describe('Diseño de páginas', () => {
     const dom = new JSDOM(html);
     const heading = dom.window.document.querySelector('h1');
     expect(heading).not.toBeNull();
-    expect(heading.textContent).toContain('impulsando'.toUpperCase());
+    expect(heading.textContent?.toUpperCase()).toContain('IMPULSANDO');
   });
   it('La navegación incluye enlaces principales', () => {
-    const navHtml = `<!DOCTYPE html><html><body><nav><a href="/">Inicio</a><a href="/about">Sobre Nosotros</a><a href="/eventos">Eventos</a><a href="/contacto">Contacto</a></nav></body></html>`;
+    const navHtml = `<!DOCTYPE html><html><body><nav><a href="/">Inicio</a><a href="/about">Nosotras</a><a href="/eventos">Eventos</a><a href="/contacto">Contacto</a></nav></body></html>`;
     const dom = new JSDOM(navHtml);
     const links = Array.from(dom.window.document.querySelectorAll('nav a')).map(el => el.textContent);
     expect(links).toContain('Inicio');
-    expect(links).toContain('Sobre Nosotros');
+    expect(links).toContain('Nosotras');
     expect(links).toContain('Eventos');
     expect(links).toContain('Contacto');
   });
