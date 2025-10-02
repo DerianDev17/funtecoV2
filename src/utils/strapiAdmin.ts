@@ -421,6 +421,28 @@ const registerAssetIfNeeded = (
   });
 };
 
+const reorderByIds = <T extends { id: string }>(
+  collection: T[],
+  orderedIds: string[]
+): T[] => {
+  const seen = new Set<string>();
+  const ordered: T[] = [];
+  orderedIds.forEach((id) => {
+    if (seen.has(id)) return;
+    const item = collection.find((candidate) => candidate.id === id);
+    if (item) {
+      ordered.push(item);
+      seen.add(id);
+    }
+  });
+  collection.forEach((item) => {
+    if (!seen.has(item.id)) {
+      ordered.push(item);
+    }
+  });
+  return ordered;
+};
+
 export interface ContentTypeBuilderModule {
   list(): ContentTypeDefinition[];
   get(uid: ContentTypeUID): ContentTypeDefinition | undefined;
@@ -457,6 +479,7 @@ export interface ContentManagerModule {
   ): ContentEntry;
   deleteEntry(uid: ContentTypeUID, id: string): void;
   setStatus(uid: ContentTypeUID, id: string, status: SectionStatus): ContentEntry;
+  reorderEntries(uid: ContentTypeUID, orderedIds: string[]): void;
 }
 
 export interface MediaLibraryModule {
@@ -869,6 +892,27 @@ export const createStrapiAdmin = (
         return this.updateEntry(uid, id, { status });
       }
       return this.updateEntry(uid, id, { status });
+    },
+    reorderEntries(uid, orderedIds) {
+      if (uid === "sections") {
+        state.sections = reorderByIds(state.sections, orderedIds);
+        persist();
+        return;
+      }
+      if (uid === "team-members") {
+        state.teamMembers = reorderByIds(state.teamMembers, orderedIds);
+        persist();
+        return;
+      }
+      if (uid === "events") {
+        state.events = reorderByIds(state.events, orderedIds);
+        persist();
+        return;
+      }
+      const collection = moduleState.customCollections[uid];
+      ensure(!!collection, "Tipo de contenido no encontrado");
+      moduleState.customCollections[uid] = reorderByIds(collection, orderedIds);
+      persist();
     },
   };
 
