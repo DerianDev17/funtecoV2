@@ -1,43 +1,104 @@
+export type SocialPlatform = 'instagram' | 'facebook' | 'linkedin' | 'twitter' | 'web';
+
+export type SocialLink = {
+  platform: SocialPlatform;
+  label: string;
+  url: string;
+};
+
 export type TeamMember = {
   name: string;
   role: string;
+  image: string;
+  shortBio: string;
   bio: string;
   focus: string;
-  image: string;
-  layout: string;
+  socials: SocialLink[];
 };
 
 export const teamMembers: TeamMember[] = [
   {
-    name: 'María Fernanda Simbaña',
-    role: 'Directora ejecutiva',
-    bio: 'Socióloga afroecuatoriana con 12 años impulsando políticas públicas y laboratorios de innovación social en territorios rurales y urbanos.',
-    focus: 'Diseña estrategias de incidencia y alianzas feministas que sostienen la red Funteco.',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/16.jpg',
-    layout: 'md:col-span-3 md:row-span-2'
+    name: 'Nieves Méndez Olaya',
+    role: 'Socia fundadora',
+    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/funtecoNieves.png',
+    shortBio:
+      'Trabajadora social con dos décadas de acompañamiento a familias afrocolombianas y ecuatorianas en procesos de cuidado comunitario.',
+    bio: 'Nieves lidera procesos de acompañamiento psicosocial y formación en derechos para mujeres migrantes afro. Ha facilitado redes de apoyo comunitario en Esmeraldas, Quito y la frontera norte, sosteniendo espacios de escucha y sanación colectiva.',
+    focus: 'Teje metodologías de cuidado y sanación colectiva.',
+    socials: [
+      {
+        platform: 'facebook',
+        label: 'Facebook de Nieves Méndez Olaya',
+        url: 'https://www.facebook.com/'
+      },
+      {
+        platform: 'instagram',
+        label: 'Instagram de Nieves Méndez Olaya',
+        url: 'https://www.instagram.com/'
+      }
+    ]
   },
   {
-    name: 'Gabriela Hurtado',
-    role: 'Coordinadora de investigación comunitaria',
-    bio: 'Periodista y maestra en derechos humanos. Lidera procesos participativos para mapear memorias afro y narrativas de movilidad.',
-    focus: 'Guía metodologías colaborativas y cuida el archivo vivo de las comunidades aliadas.',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/13.jpg',
-    layout: 'md:col-span-3'
+    name: 'Diana Angulo Balanta',
+    role: 'Socia fundadora',
+    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/funtecoDiana.png',
+    shortBio:
+      'Comunicadora y gestora cultural afrocolombiana. Impulsa procesos de memoria y narrativas audiovisuales con juventudes afro.',
+    bio: 'Diana dinamiza talleres de comunicación popular y proyectos audiovisuales que rescatan historias afro en Ecuador y Colombia. Coordina alianzas con festivales comunitarios y acompaña a liderazgos juveniles en el uso estratégico de medios digitales.',
+    focus: 'Potencia la comunicación comunitaria y la memoria audiovisual afro.',
+    socials: [
+      {
+        platform: 'instagram',
+        label: 'Instagram de Diana Angulo Balanta',
+        url: 'https://www.instagram.com/'
+      },
+      {
+        platform: 'linkedin',
+        label: 'LinkedIn de Diana Angulo Balanta',
+        url: 'https://www.linkedin.com/'
+      }
+    ]
   },
   {
-    name: 'Yessenia Flores',
-    role: 'Mentora de liderazgo juvenil',
-    bio: 'Facilitadora intercultural que acompaña a jóvenes afrodescendientes en procesos de liderazgo, economía solidaria y autocuidado.',
-    focus: 'Coordina círculos de escucha, residencias creativas y acompañamiento psicosocial.',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/15.jpeg',
-    layout: 'md:col-span-3 md:row-span-2'
+    name: 'Elizabeth Méndez Grueso',
+    role: 'Socia fundadora',
+    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/funtecoElizabeth.png',
+    shortBio:
+      'Economista popular que acompaña emprendimientos liderados por mujeres afro en Quito y Esmeraldas con enfoque solidario.',
+    bio: 'Elizabeth articula procesos de economía feminista afro, fortaleciendo cooperativas, fondos solidarios y redes de comercialización justa. Diseña herramientas financieras accesibles y procesos de capacitación que priorizan el bienestar colectivo.',
+    focus: 'Fortalece economías del cuidado y emprendimientos afro.',
+    socials: [
+      {
+        platform: 'instagram',
+        label: 'Instagram de Elizabeth Méndez Grueso',
+        url: 'https://www.instagram.com/'
+      },
+      {
+        platform: 'facebook',
+        label: 'Facebook de Elizabeth Méndez Grueso',
+        url: 'https://www.facebook.com/'
+      }
+    ]
   },
   {
-    name: 'Red de voluntarias tejedoras',
-    role: 'Equipos territoriales',
-    bio: 'Más de 40 mujeres sostienen talleres, campañas de sensibilización y ferias comunitarias desde Esmeraldas hasta Loja.',
-    focus: 'Fortalecen la economía del cuidado y activan respuestas rápidas ante emergencias.',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/14.jpg',
-    layout: 'md:col-span-3'
+    name: 'Francia Jenny Moreno',
+    role: 'Coordinadora de proyectos',
+    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/funtecoFrancia.png',
+    shortBio:
+      'Ingeniera en desarrollo local con experiencia en gestión de fondos y programas con enfoque interseccional en Ecuador.',
+    bio: 'Francia coordina proyectos de justicia racial y movilidad humana, liderando equipos territoriales y procesos de evaluación participativa. Gestiona alianzas institucionales y garantiza que cada iniciativa centre el cuidado y la sostenibilidad.',
+    focus: 'Gestiona proyectos con enfoque interseccional y territorial.',
+    socials: [
+      {
+        platform: 'linkedin',
+        label: 'LinkedIn de Francia Jenny Moreno',
+        url: 'https://www.linkedin.com/'
+      },
+      {
+        platform: 'web',
+        label: 'Portafolio de Francia Jenny Moreno',
+        url: 'https://example.com/'
+      }
+    ]
   }
 ];

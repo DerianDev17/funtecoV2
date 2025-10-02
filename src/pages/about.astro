@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import TeamGrid from '../components/TeamGrid.astro';
 import { teamMembers } from '../data/team';
 ---
 <BaseLayout title="Nosotras" description="Conoce al equipo feminista afro de Funteco que teje investigación, educación y cuidado comunitario en Ecuador.">
@@ -59,31 +60,7 @@ import { teamMembers } from '../data/team';
             Cada integrante conecta saberes ancestrales con innovación social para acompañar a mujeres, juventudes y familias afro en Ecuador. Te presentamos a quienes impulsan los programas y alianzas de Funteco.
           </p>
         </div>
-        <div class="grid gap-6 md:grid-cols-6 auto-rows-[minmax(220px,_auto)]">
-          {teamMembers.map((member, index) => (
-            <article
-              class={`group relative overflow-hidden rounded-3xl border border-accent-blush/40 bg-white/90 shadow-lg ${member.layout}`}
-            >
-              <img
-                src={member.image}
-                alt={`Retrato de ${member.name}`}
-                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading={index === 0 ? 'eager' : 'lazy'}
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-primary-dark/80 via-primary-dark/40 to-transparent"></div>
-              <div class="absolute inset-x-0 bottom-0 space-y-3 p-6 text-white">
-                <div>
-                  <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent/80">{member.role}</p>
-                  <h3 class="text-2xl font-semibold leading-snug">{member.name}</h3>
-                </div>
-                <p class="text-sm text-white/80 leading-relaxed">{member.bio}</p>
-                <div class="rounded-2xl bg-white/10 p-3 text-xs font-medium text-white/90 backdrop-blur">
-                  {member.focus}
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        <TeamGrid members={teamMembers} />
       </div>
     </section>
 
