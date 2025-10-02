@@ -1,17 +1,52 @@
 ---
-// Recibe título y descripción para SEO
-const { title, description } = Astro.props;
+const {
+  title = 'Funteco',
+  description = 'Fundación Tejiendo Conocimientos – investigación, educación y comunidad',
+  canonical = Astro.url?.href ?? 'https://funteco.org'
+} = Astro.props;
+
+const seoTitle = title ? `${title} | Funteco` : 'Funteco';
+const ogImage = 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/13.jpg';
 ---
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title ? `${title} | Funteco` : 'Funteco'}</title>
-    <meta name="description" content={description || 'Fundación Tejiendo Conocimientos – investigación, educación y comunidad'} />
+    <title>{seoTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="fundación afrodescendiente, derechos humanos, investigación social, movilidad humana, educación inclusiva, comunidad afro" />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#6F6AC3" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="es_EC" />
+    <meta property="og:site_name" content="Funteco" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seoTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Funteco',
+      url: canonical,
+      logo: ogImage,
+      sameAs: [
+        'https://www.facebook.com',
+        'https://www.instagram.com',
+        'https://www.twitter.com'
+      ],
+      description
+    })} />
   </head>
-  <body class="font-sans antialiased text-gray-800 bg-white">
+  <body class="font-[\'Work Sans\'] antialiased text-neutral-black bg-neutral">
     <slot />
   </body>
 </html>

@@ -2,96 +2,153 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import EventCard from '../components/EventCard.astro';
+import { events } from '../data/events';
+
+const upcomingEvents = [...events]
+  .sort((a, b) => a.date.localeCompare(b.date))
+  .slice(0, 3);
 ---
-<BaseLayout title="Inicio" description="Funteco – Investigando y educando para un futuro inclusivo" >
+<BaseLayout
+  title="Inicio"
+  description="Funteco impulsa investigación, educación y cultura afrodescendiente en Ecuador mediante talleres, foros y acompañamiento comunitario."
+>
   <Header current="/" />
-  <!-- Hero section -->
-  <section class="relative bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/carousel-1.jpg');">
-    <div class="absolute inset-0 bg-gray-900 bg-opacity-60"></div>
-    <div class="relative max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8 text-center text-white">
-      <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">Impulsando el progreso a través de la investigación y la educación</h1>
-      <p class="text-lg sm:text-xl mb-8">Tejiendo conocimiento para un futuro prometedor.</p>
-      <a href="/about" class="inline-block bg-primary text-white px-6 py-3 rounded-md shadow hover:bg-primary-dark transition-colors">Conoce nuestra misión</a>
-    </div>
-  </section>
-
-  <!-- Programas section -->
-  <section class="py-16 bg-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl font-bold mb-8">Nuestros ejes</h2>
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
-          <div class="mb-4 text-primary">
-            <!-- icon of research using heroicons or inline SVG -->
-            <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M12 9v6"></path><circle cx="12" cy="12" r="9"></circle></svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-2">Investigación</h3>
-          <p class="text-gray-600">Promovemos estudios y publicaciones que visibilizan las realidades de las comunidades afrodescendientes y personas en movilidad.</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
-          <div class="mb-4 text-primary">
-            <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6H4z"></path><path d="M4 14h16v6H4z"></path></svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-2">Educación</h3>
-          <p class="text-gray-600">Capacitamos a líderes y jóvenes mediante talleres, cursos y eventos educativos que fomentan la inclusión y el respeto.</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
-          <div class="mb-4 text-primary">
-            <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"></path><path d="M3 12h18"></path><path d="M3 17h18"></path></svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-2">Comunidad</h3>
-          <p class="text-gray-600">Fortalecemos redes de apoyo y espacios de encuentro para construir un tejido social equitativo y solidario.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Eventos section preview -->
-  <section class="py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl font-bold text-center mb-8">Próximos eventos</h2>
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <!-- Evento 1 -->
-        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition">
-          <img src="https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/13.jpg" alt="Taller de derechos humanos" class="w-full h-40 object-cover" loading="lazy" />
-          <div class="p-4">
-            <h3 class="text-xl font-semibold mb-2">Taller de derechos humanos</h3>
-            <p class="text-gray-600 mb-2">Explora herramientas prácticas para la defensa y promoción de los derechos de mujeres migrantes.</p>
-            <p class="text-sm text-gray-500">Próximo mes</p>
+  <main class="bg-gradient-to-br from-neutral via-white to-accent-blush/20">
+    <!-- Hero section -->
+    <section class="relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-primary-dark/20 via-accent-flamingo/20 to-transparent"></div>
+      <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+        <div class="text-center space-y-8">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
+            Movimiento afro en acción
+          </span>
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-dark leading-tight">
+            Investigamos, educamos y celebramos la memoria afrodescendiente
+          </h1>
+          <p class="max-w-3xl mx-auto text-lg text-neutral-black/80 leading-relaxed">
+            Somos Funteco, una fundación ecuatoriana que impulsa proyectos de investigación, formación y cultura para comunidades afrodescendientes y personas en movilidad humana.
+          </p>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <a href="/eventos" class="inline-flex items-center justify-center rounded-full bg-primary-dark px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-primary">
+              Explorar eventos
+            </a>
+            <a href="/about" class="inline-flex items-center justify-center rounded-full border border-primary-dark px-6 py-3 text-sm font-semibold text-primary-dark hover:bg-white/70 transition">
+              Conocer la fundación
+            </a>
           </div>
         </div>
-        <!-- Evento 2 -->
-        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition">
-          <img src="https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/14.jpg" alt="Foro de investigación social" class="w-full h-40 object-cover" loading="lazy" />
-          <div class="p-4">
-            <h3 class="text-xl font-semibold mb-2">Foro de investigación social</h3>
-            <p class="text-gray-600 mb-2">Encuentro con especialistas para debatir desafíos y oportunidades en la región andina.</p>
-            <p class="text-sm text-gray-500">Octubre 2025</p>
-          </div>
-        </div>
-        <!-- Evento 3 -->
-        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition">
-          <img src="https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/15.jpeg" alt="Festival cultural afrodescendiente" class="w-full h-40 object-cover" loading="lazy" />
-          <div class="p-4">
-            <h3 class="text-xl font-semibold mb-2">Festival cultural afrodescendiente</h3>
-            <p class="text-gray-600 mb-2">Celebración de la diversidad y la herencia afroecuatoriana a través del arte y la música.</p>
-            <p class="text-sm text-gray-500">Diciembre 2025</p>
+        <div class="mt-16 flex justify-center">
+          <div class="relative">
+            <div class="absolute -inset-6 bg-gradient-to-br from-accent-flamingo/60 via-primary/40 to-primary-dark/50 blur-3xl opacity-70"></div>
+            <div class="relative rounded-[3rem] border-8 border-white shadow-2xl overflow-hidden max-w-3xl">
+              <img
+                src="https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/carousel-1.jpg"
+                alt="Personas afrodescendientes participando en una actividad comunitaria de Funteco"
+                class="w-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </div>
-      <div class="text-center mt-8">
-        <a href="/eventos" class="text-primary hover:underline font-medium">Ver todos los eventos &rarr;</a>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Call to Action -->
-  <section class="py-16 bg-primary text-white text-center">
-    <div class="max-w-3xl mx-auto px-4">
-      <h2 class="text-3xl font-bold mb-4">Únete a nuestra causa</h2>
-      <p class="mb-6">Puedes colaborar participando en nuestros programas, asistiendo a eventos o haciendo un donativo. Cada acción cuenta.</p>
-      <a href="/contacto" class="inline-block bg-white text-primary font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100">Contáctanos</a>
-    </div>
-  </section>
+    <!-- Programas section -->
+    <section class="py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1fr,1.2fr] items-center">
+          <div class="space-y-6">
+            <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
+              Nuestros ejes
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-bold text-primary-dark leading-tight">
+              Tejemos conocimiento, acompañamiento y redes para la justicia racial
+            </h2>
+            <p class="text-neutral-black/80 leading-relaxed">
+              Diseñamos programas de investigación aplicada, educación transformadora y comunidad viva que fortalecen el liderazgo afro y la protección de los derechos humanos en Ecuador.
+            </p>
+            <a href="/about" class="inline-flex items-center gap-2 text-sm font-semibold text-primary-dark hover:underline">
+              Ver nuestra historia →
+            </a>
+          </div>
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div class="rounded-2xl bg-white/90 border border-accent-blush/40 p-6 shadow-md">
+              <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent-flamingo/30 text-primary-dark">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M12 9v6"/><circle cx="12" cy="12" r="9"/></svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary-dark mb-2">Investigación aplicada</h3>
+              <p class="text-sm text-neutral-black/70 leading-relaxed">Publicamos estudios y cartografías comunitarias que visibilizan la realidad afrodescendiente y orientan políticas públicas inclusivas.</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 border border-accent-blush/40 p-6 shadow-md">
+              <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent/20 text-primary-dark">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6H4z"/><path d="M4 14h16v6H4z"/></svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary-dark mb-2">Educación transformadora</h3>
+              <p class="text-sm text-neutral-black/70 leading-relaxed">Facilitamos cursos, laboratorios y mentorías que potencian el liderazgo de mujeres, juventudes y personas en movilidad humana.</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 border border-accent-blush/40 p-6 shadow-md">
+              <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary-dark">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M3 17h18"/></svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary-dark mb-2">Comunidad viva</h3>
+              <p class="text-sm text-neutral-black/70 leading-relaxed">Sostenemos redes de cuidado, espacios culturales y ferias que celebran la memoria afro y crean oportunidades económicas solidarias.</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 border border-accent-blush/40 p-6 shadow-md">
+              <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-panafrican-green/20 text-panafrican-green">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary-dark mb-2">Incidencia y alianzas</h3>
+              <p class="text-sm text-neutral-black/70 leading-relaxed">Articulamos organizaciones, universidades y colectivos para impulsar agendas de justicia racial y movilidad segura.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Eventos section preview -->
+    <section class="py-20 bg-white/60">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-12">
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
+              Próximos encuentros
+            </span>
+            <h2 class="mt-4 text-3xl sm:text-4xl font-bold text-primary-dark leading-tight">Próximos eventos</h2>
+            <p class="mt-3 text-neutral-black/80 max-w-2xl">
+              Participa en talleres, foros y festivales que combinan saberes ancestrales con innovación social para transformar nuestras comunidades.
+            </p>
+          </div>
+          <a href="/eventos" class="inline-flex items-center justify-center rounded-full border border-primary-dark px-6 py-3 text-sm font-semibold text-primary-dark hover:bg-accent-flamingo/20 transition">
+            Ver agenda completa
+          </a>
+        </div>
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {upcomingEvents.map((event) => (
+            <EventCard event={event} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="rounded-3xl bg-gradient-to-r from-primary-dark via-primary to-accent px-8 py-12 shadow-2xl text-white">
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">Únete a la red Funteco</h2>
+          <p class="mb-8 text-white/80">
+            Súmate como aliada, voluntario o donante para impulsar investigaciones, programas educativos y celebraciones culturales que reafirman la identidad afro.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/contacto" class="inline-flex items-center justify-center rounded-full bg-white text-primary-dark px-6 py-3 text-sm font-semibold shadow-md hover:bg-neutral transition">
+              Escribir al equipo
+            </a>
+            <a href="mailto:contacto@funteco.org" class="inline-flex items-center justify-center rounded-full border border-white px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition">
+              Donar o colaborar
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
   <Footer />
 </BaseLayout>
