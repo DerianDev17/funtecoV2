@@ -54,7 +54,7 @@ export interface StorageLike {
 
 const STORAGE_KEY = "funteco-admin-state";
 
-const ROLE_CAPABILITIES: Record<
+export const ROLE_CAPABILITIES: Record<
   Role,
   {
     manageUsers: boolean;

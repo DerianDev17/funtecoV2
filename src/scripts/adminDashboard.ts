@@ -1,22 +1,32 @@
 import {
-  createAdminStore,
-  ROLES,
-  type ManagedEvent,
-  type ManagedTeamMember,
-  type SectionStatus,
-} from "../utils/adminStore";
+  createStrapiAdmin,
+  type ContentEntry,
+  type ContentTypeDefinition,
+  type MediaAsset,
+} from "../utils/strapiAdmin";
+import { ROLES, type SectionStatus } from "../utils/adminStore";
+import type { SocialLink } from "../data/team";
 
 const root = document.querySelector<HTMLElement>("#admin-app");
 if (!root) {
   console.warn("Vista de administración no encontrada");
 } else {
-  const store = createAdminStore(window.localStorage);
+  const store = createStrapiAdmin(window.localStorage);
+  const { contentTypeBuilder, contentManager, mediaLibrary, usersRolesPermissions } =
+    store.modules;
+
   const loginView = document.querySelector<HTMLElement>("#login-view");
   const dashboard = document.querySelector<HTMLElement>("#dashboard");
   const loginForm = document.querySelector<HTMLFormElement>("#login-form");
   const loginError = document.querySelector<HTMLElement>("#login-error");
-  const currentUser = document.querySelector<HTMLElement>("#current-user");
+  const currentUserLabel = document.querySelector<HTMLElement>("#current-user");
   const logoutBtn = document.querySelector<HTMLButtonElement>("#logout-btn");
+
+  const contentTypeForm = document.querySelector<HTMLFormElement>("#content-type-form");
+  const contentTypeFeedback = document.querySelector<HTMLElement>("#content-type-feedback");
+  const contentFieldForm = document.querySelector<HTMLFormElement>("#content-field-form");
+  const contentFieldFeedback = document.querySelector<HTMLElement>("#content-field-feedback");
+  const contentTypeList = document.querySelector<HTMLElement>("#content-type-list");
 
   const sectionForm = document.querySelector<HTMLFormElement>("#section-form");
   const sectionList = document.querySelector<HTMLElement>("#section-list");
@@ -37,6 +47,10 @@ if (!root) {
   const eventPreviewDraft = document.querySelector<HTMLElement>("#event-preview-draft");
   const eventPreviewPublished = document.querySelector<HTMLElement>("#event-preview-published");
 
+  const mediaUploadForm = document.querySelector<HTMLFormElement>("#media-upload-form");
+  const mediaFeedback = document.querySelector<HTMLElement>("#media-feedback");
+  const mediaLibraryList = document.querySelector<HTMLElement>("#media-library-list");
+
   const userManagement = document.querySelector<HTMLElement>("#user-management");
   const userForm = document.querySelector<HTMLFormElement>("#user-form");
   const userList = document.querySelector<HTMLElement>("#user-list");
@@ -50,8 +64,8 @@ if (!root) {
     document.querySelectorAll<HTMLElement>("[data-view-panel]")
   );
 
-  type ViewKey = "content" | "team" | "events" | "users";
-  let activeView: ViewKey = "content";
+  type ViewKey = "content-types" | "content-manager" | "media-library" | "users";
+  let activeView: ViewKey = "content-types";
 
   const setHidden = (element: Element | null, hidden: boolean) => {
     if (!element) return;
@@ -112,18 +126,21 @@ if (!root) {
       .map((item) => item.trim())
       .filter(Boolean);
 
-  const buildSocialLabel = (platform: string, name: string) => {
-    const base =
-      platform === "web"
-        ? "Portafolio"
-        : platform === "instagram"
-        ? "Instagram"
-        : platform === "facebook"
-        ? "Facebook"
-        : platform === "linkedin"
-        ? "LinkedIn"
-        : "Perfil";
-    return `${base} de ${name}`.trim();
+  const parseSocials = (value: string, name: string): SocialLink[] => {
+    if (!value.trim()) return [];
+    try {
+      const parsed = JSON.parse(value) as SocialLink[];
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter((item) => item && typeof item.url === "string")
+        .map((item) => ({
+          ...item,
+          label: item.label || `${item.platform} de ${name}`,
+        }));
+    } catch (error) {
+      console.warn("No se pudo interpretar la lista de redes sociales", error);
+      return [];
+    }
   };
 
   const updateStatusControl = (
@@ -177,638 +194,702 @@ if (!root) {
     });
   });
 
+  const renderContentTypes = () => {
+    const types = contentTypeBuilder.list();
+    if (!contentTypeList) return;
+    if (!types.length) {
+      contentTypeList.innerHTML =
+        '<p class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Configura tu primer tipo de contenido para habilitar colecciones personalizadas.</p>';
+      return;
+    }
+    contentTypeList.innerHTML = types
+      .map((type) => {
+        const fields = type.fields
+          .map(
+            (field) => `
+              <li class="flex items-start justify-between gap-3 rounded border border-slate-800 bg-slate-900/60 px-3 py-2">
+                <div>
+                  <p class="font-medium text-slate-200">${escapeHtml(field.name)}</p>
+                  <p class="text-xs text-slate-400">Tipo: ${escapeHtml(field.type)}${
+                    field.required ? " · obligatorio" : ""
+                  }</p>
+                </div>
+                ${
+                  type.configurable && field.configurable
+                    ? `<button type="button" class="rounded border border-slate-700 px-2 py-1 text-xs text-rose-200 transition hover:border-rose-500/60 hover:text-rose-100" data-action="remove-field" data-content-type="${escapeHtml(
+                        type.uid
+                      )}" data-field="${escapeHtml(field.id)}">Eliminar</button>`
+                    : ""
+                }
+              </li>
+            `
+          )
+          .join("");
+        const canDelete = type.configurable;
+        return `
+          <article class="space-y-3 rounded-lg border border-slate-800 bg-slate-900/60 p-4">
+            <header class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h4 class="text-base font-semibold text-slate-200">${escapeHtml(
+                  type.displayName
+                )}</h4>
+                <p class="text-xs text-slate-400">${escapeHtml(type.description)}</p>
+                <p class="text-[11px] uppercase tracking-wide text-slate-500">
+                  UID: ${escapeHtml(type.uid)} · Categoría: ${escapeHtml(type.category)}
+                </p>
+              </div>
+              ${
+                canDelete
+                  ? `<button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-xs font-semibold text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-type" data-content-type="${escapeHtml(
+                      type.uid
+                    )}">Eliminar</button>`
+                  : ""
+              }
+            </header>
+            <ul class="space-y-2 text-sm text-slate-200">${fields ||
+              '<li class="rounded border border-dashed border-slate-700 px-3 py-2 text-xs text-slate-400">Aún no hay campos configurados.</li>'
+            }</ul>
+          </article>
+        `;
+      })
+      .join("");
+  };
+
+  const populateContentTypeOptions = () => {
+    if (!contentFieldForm) return;
+    const select = contentFieldForm.elements.namedItem("uid") as HTMLSelectElement | null;
+    if (!select) return;
+    const types = contentTypeBuilder.list();
+    select.innerHTML = types
+      .filter((type) => type.configurable)
+      .map(
+        (type) =>
+          `<option value="${escapeHtml(type.uid)}">${escapeHtml(type.displayName)}</option>`
+      )
+      .join("");
+  };
+
+  const renderSections = () => {
+    if (!sectionList) return;
+    const entries = contentManager.listEntries("sections");
+    if (!entries.length) {
+      sectionList.innerHTML =
+        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Aún no hay secciones registradas.</li>';
+      return;
+    }
+    sectionList.innerHTML = entries
+      .map(
+        (entry) => `
+          <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="font-semibold text-slate-200">${escapeHtml(
+                  String(entry.attributes.title ?? "")
+                )}</p>
+                <p class="text-xs text-slate-400">${truncate(
+                  escapeHtml(String(entry.attributes.content ?? "")),
+                  120
+                )}</p>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="rounded-full border border-slate-700 px-2 py-1 text-slate-300">${
+                  entry.status === "published" ? "Publicado" : "Borrador"
+                }</span>
+                <span class="text-slate-500">${escapeHtml(toDateTime(entry.updatedAt))}</span>
+              </div>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-2 text-xs">
+              <button type="button" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-section" data-id="${entry.id}">Editar</button>
+              <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-section" data-id="${entry.id}">Eliminar</button>
+            </div>
+          </li>
+        `
+      )
+      .join("");
+  };
+
   const renderTeamPreviewList = (
     container: HTMLElement | null,
-    items: ManagedTeamMember[],
+    entries: ContentEntry[],
+    status: SectionStatus,
     emptyMessage: string
   ) => {
     if (!container) return;
-    if (!items.length) {
-      container.innerHTML = `<p class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-slate-500">${escapeHtml(
-        emptyMessage
-      )}</p>`;
+    const filtered = entries.filter((entry) => entry.status === status);
+    if (!filtered.length) {
+      container.innerHTML = `<p class="text-xs text-slate-500">${escapeHtml(emptyMessage)}</p>`;
       return;
     }
-    container.innerHTML = items
-      .map(
-        (member) => `
-          <article class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2">
-            <p class="font-semibold text-slate-200">${escapeHtml(member.name)}</p>
-            <p class="text-[10px] uppercase tracking-wide text-slate-500">${escapeHtml(
-              member.role
-            )}</p>
-            <p class="mt-2 text-xs text-slate-400">${escapeHtml(
-              truncate(member.shortBio || "Sin biografía", 140)
-            )}</p>
-          </article>
-        `
+    container.innerHTML = filtered
+      .map((entry) =>
+        `<p class="rounded border border-slate-800 bg-slate-900/60 px-2 py-1 text-xs text-slate-300">${escapeHtml(
+          String(entry.attributes.name ?? entry.attributes.title ?? "")
+        )}</p>`
       )
       .join("");
   };
 
-  const renderEventPreviewList = (
-    container: HTMLElement | null,
-    items: ManagedEvent[],
-    emptyMessage: string
-  ) => {
-    if (!container) return;
-    if (!items.length) {
-      container.innerHTML = `<p class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-slate-500">${escapeHtml(
-        emptyMessage
-      )}</p>`;
-      return;
-    }
-    container.innerHTML = items
-      .map(
-        (event) => `
-          <article class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2">
-            <p class="font-semibold text-slate-200">${escapeHtml(event.title)}</p>
-            <p class="text-[10px] uppercase tracking-wide text-slate-500">${escapeHtml(
-              event.formattedDate
-            )}</p>
-            <p class="mt-2 text-xs text-slate-400">${escapeHtml(
-              truncate(event.shortDescription || "Sin descripción", 140)
-            )}</p>
-          </article>
-        `
-      )
-      .join("");
-  };
-
-  const render = () => {
-    const state = store.getState();
-    const activeUserRecord =
-      state.users.find((user) => user.id === state.currentUserId) ?? null;
-    const isAuthenticated = Boolean(activeUserRecord);
-
-    setHidden(loginView, isAuthenticated);
-    setHidden(dashboard, !isAuthenticated);
-    if (!isAuthenticated) {
-      loginForm?.reset();
-      setMessage(loginError, "", "info");
-      setView("content");
-      return;
-    }
-
-    if (currentUser && activeUserRecord) {
-      currentUser.textContent = `${activeUserRecord.username} · ${activeUserRecord.role}`;
-    }
-
-    const canManageUsers = store.canManageUsers();
-    const canPublish = store.canPublish();
-    setHidden(userManagement, !canManageUsers);
-    setHidden(userNavBtn, !canManageUsers);
-    if (!canManageUsers && activeView === "users") {
-      setView("content");
+  const renderTeam = () => {
+    if (!teamList) return;
+    const entries = contentManager.listEntries("team-members");
+    if (!entries.length) {
+      teamList.innerHTML =
+        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Registra el primer perfil para tu equipo.</li>';
     } else {
-      setView(activeView);
+      teamList.innerHTML = entries
+        .map(
+          (entry) => {
+            const name = String(entry.attributes.name ?? "");
+            const role = String(entry.attributes.role ?? "");
+            const image = String(entry.attributes.image ?? "");
+            return `
+            <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p class="font-semibold text-slate-200">${escapeHtml(name)}</p>
+                  <p class="text-xs text-slate-400">${escapeHtml(role)}</p>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="rounded-full border border-slate-700 px-2 py-1 text-slate-300">${
+                    entry.status === "published" ? "Publicado" : "Borrador"
+                  }</span>
+                  <span class="text-slate-500">${escapeHtml(toDateTime(entry.updatedAt))}</span>
+                </div>
+              </div>
+              <div class="mt-3 flex flex-wrap items-center gap-3 text-xs">
+                <button type="button" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-member" data-id="${entry.id}">Editar</button>
+                <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-member" data-id="${entry.id}">Eliminar</button>
+                ${
+                  image
+                    ? `<a href="${escapeHtml(image)}" target="_blank" rel="noopener" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-slate-500">Ver imagen</a>`
+                    : ""
+                }
+              </div>
+            </li>
+          `;
+          }
+        )
+        .join("");
     }
+    renderTeamPreviewList(teamPreviewDraft, entries, "draft", "Sin borradores");
+    renderTeamPreviewList(teamPreviewPublished, entries, "published", "Sin publicaciones");
+  };
 
-    updateStatusControl(
-      sectionForm?.querySelector<HTMLSelectElement>("[name=status]"),
-      canPublish
-    );
-    updateStatusControl(
-      teamForm?.querySelector<HTMLSelectElement>("[name=status]"),
-      canPublish
-    );
-    updateStatusControl(
-      eventForm?.querySelector<HTMLSelectElement>("[name=status]"),
-      canPublish
-    );
-
-    if (sectionList) {
-      sectionList.innerHTML = "";
-      state.sections
-        .slice()
-        .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-        .forEach((section) => {
-          const item = document.createElement("li");
-          item.className =
-            "rounded-lg border border-slate-800 bg-slate-950/40 p-4 shadow-inner shadow-slate-950/30";
-          item.innerHTML = `
-            <div class="flex items-start justify-between gap-3">
+  const renderEvents = () => {
+    if (!eventList) return;
+    const entries = contentManager.listEntries("events");
+    if (!entries.length) {
+      eventList.innerHTML =
+        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Configura eventos, talleres o hitos relevantes.</li>';
+    } else {
+      eventList.innerHTML = entries
+        .map(
+          (entry) => `
+          <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h4 class="font-semibold text-teal-200">${escapeHtml(section.title)}</h4>
-                <p class="mt-1 text-xs uppercase tracking-wide text-slate-500">${
-                  section.status === "published" ? "Publicado" : "Borrador"
-                }</p>
-                <p class="mt-2 text-xs text-slate-500">Última actualización: ${escapeHtml(
-                  toDateTime(section.updatedAt)
+                <p class="font-semibold text-slate-200">${escapeHtml(
+                  String(entry.attributes.title ?? "")
+                )}</p>
+                <p class="text-xs text-slate-400">${escapeHtml(
+                  String(entry.attributes.shortDescription ?? "")
                 )}</p>
               </div>
-              <div class="flex flex-col gap-2">
-                <button
-                  data-action="edit"
-                  data-id="${section.id}"
-                  class="rounded bg-slate-800 px-3 py-1 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
-                >
-                  Editar
-                </button>
-                <button
-                  data-action="delete"
-                  data-id="${section.id}"
-                  class="rounded bg-rose-600/80 px-3 py-1 text-xs font-medium text-rose-100 transition hover:bg-rose-600"
-                >
-                  Eliminar
-                </button>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="rounded-full border border-slate-700 px-2 py-1 text-slate-300">${
+                  entry.status === "published" ? "Publicado" : "Borrador"
+                }</span>
+                <span class="text-slate-500">${escapeHtml(toDateTime(entry.updatedAt))}</span>
               </div>
             </div>
-            <p class="mt-3 text-sm text-slate-300">${escapeHtml(section.content)}</p>
-          `;
-          sectionList.appendChild(item);
-        });
+            <div class="mt-3 flex flex-wrap gap-2 text-xs">
+              <button type="button" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-event" data-id="${entry.id}">Editar</button>
+              <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-event" data-id="${entry.id}">Eliminar</button>
+            </div>
+          </li>
+        `
+        )
+        .join("");
     }
 
-    if (teamList) {
-      teamList.innerHTML = "";
-      state.teamMembers
-        .slice()
-        .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-        .forEach((member) => {
-          const item = document.createElement("li");
-          item.className =
-            "rounded-lg border border-slate-800 bg-slate-950/40 p-4 shadow-inner shadow-slate-950/30";
-          const expertiseList = member.expertise
-            .map((item) => `<li>• ${escapeHtml(item)}</li>`)
-            .join("");
-          const highlightsList = member.highlights
-            .map((item) => `<li>• ${escapeHtml(item)}</li>`)
-            .join("");
-          const socialsList = member.socials
+    const draft = entries.filter((entry) => entry.status === "draft");
+    const published = entries.filter((entry) => entry.status === "published");
+    if (eventPreviewDraft) {
+      eventPreviewDraft.innerHTML = draft.length
+        ? draft
             .map(
-              (social) => `
-                <li>
-                  <a
-                    class="text-teal-300 underline decoration-dotted underline-offset-4 hover:text-teal-200"
-                    href="${escapeHtml(social.url)}"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    ${escapeHtml(social.label)}
-                  </a>
-                </li>
-              `
+              (entry) =>
+                `<p class="rounded border border-slate-800 bg-slate-900/60 px-2 py-1 text-xs text-slate-300">${escapeHtml(
+                  String(entry.attributes.title ?? "")
+                )}</p>`
             )
-            .join("");
-          const bioParagraphs = member.bio
-            .map((paragraph) => `<p class="mt-2 leading-relaxed">${escapeHtml(paragraph)}</p>`)
-            .join("");
-          item.innerHTML = `
-            <div class="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h4 class="font-semibold text-teal-200">${escapeHtml(member.name)}</h4>
-                <p class="text-xs uppercase tracking-wide text-slate-500">${escapeHtml(
-                  member.role
-                )}</p>
-                <p class="mt-2 text-xs text-slate-500">Actualizado: ${escapeHtml(
-                  toDateTime(member.updatedAt)
-                )}</p>
-                <p class="mt-2 text-sm text-slate-300">${escapeHtml(member.shortBio)}</p>
-              </div>
-              <div class="flex flex-col gap-2">
-                <button
-                  data-action="edit-team"
-                  data-id="${member.id}"
-                  class="rounded bg-slate-800 px-3 py-1 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
-                >
-                  Editar
-                </button>
-                <button
-                  data-action="delete-team"
-                  data-id="${member.id}"
-                  class="rounded bg-rose-600/80 px-3 py-1 text-xs font-medium text-rose-100 transition hover:bg-rose-600"
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-            <details class="mt-3 rounded-lg border border-slate-800 bg-slate-900/40 p-3">
-              <summary class="cursor-pointer text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Ver vista previa
-              </summary>
-              <div class="mt-3 space-y-2 text-sm text-slate-300">
-                <div>
-                  <p class="font-semibold text-slate-200">Biografía extendida</p>
-                  ${bioParagraphs || '<p class="text-xs text-slate-500">Sin biografía detallada</p>'}
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-200">Enfoque</p>
-                  <p class="text-sm text-slate-400">${escapeHtml(member.focus || "Sin enfoque definido")}</p>
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-200">Áreas de experiencia</p>
-                  <ul class="mt-1 space-y-1 pl-4 text-sm text-slate-400">
-                    ${expertiseList || '<li class="text-xs text-slate-500">Sin registros</li>'}
-                  </ul>
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-200">Logros destacados</p>
-                  <ul class="mt-1 space-y-1 pl-4 text-sm text-slate-400">
-                    ${highlightsList || '<li class="text-xs text-slate-500">Sin registros</li>'}
-                  </ul>
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-200">Redes</p>
-                  <ul class="mt-1 space-y-1 pl-4 text-sm text-teal-300">
-                    ${socialsList || '<li class="text-xs text-slate-500">Sin enlaces</li>'}
-                  </ul>
-                </div>
-              </div>
-            </details>
-          `;
-          teamList.appendChild(item);
-        });
+            .join("")
+        : '<p class="text-xs text-slate-500">Sin borradores</p>';
     }
-
-    if (eventList) {
-      eventList.innerHTML = "";
-      state.events
-        .slice()
-        .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-        .forEach((event) => {
-          const item = document.createElement("li");
-          item.className =
-            "rounded-lg border border-slate-800 bg-slate-950/40 p-4 shadow-inner shadow-slate-950/30";
-          const descriptionBlocks = event.description
-            .map((paragraph) => `<p class="mt-2 leading-relaxed">${escapeHtml(paragraph)}</p>`)
-            .join("");
-          const tagsList = event.tags
-            .map((tag) => `<span class="rounded bg-slate-800 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-300">${escapeHtml(tag)}</span>`)
-            .join(" ");
-          item.innerHTML = `
-            <div class="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h4 class="font-semibold text-teal-200">${escapeHtml(event.title)}</h4>
-                <p class="text-xs uppercase tracking-wide text-slate-500">${escapeHtml(
-                  event.formattedDate
-                )}</p>
-                <p class="mt-2 text-xs text-slate-500">Actualizado: ${escapeHtml(
-                  toDateTime(event.updatedAt)
-                )}</p>
-                <p class="mt-2 text-sm text-slate-300">${escapeHtml(event.shortDescription)}</p>
-              </div>
-              <div class="flex flex-col gap-2">
-                <button
-                  data-action="edit-event"
-                  data-id="${event.id}"
-                  class="rounded bg-slate-800 px-3 py-1 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
-                >
-                  Editar
-                </button>
-                <button
-                  data-action="delete-event"
-                  data-id="${event.id}"
-                  class="rounded bg-rose-600/80 px-3 py-1 text-xs font-medium text-rose-100 transition hover:bg-rose-600"
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-            <details class="mt-3 rounded-lg border border-slate-800 bg-slate-900/40 p-3">
-              <summary class="cursor-pointer text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Ver vista previa
-              </summary>
-              <div class="mt-3 space-y-2 text-sm text-slate-300">
-                <div>
-                  <p class="font-semibold text-slate-200">Descripción completa</p>
-                  ${descriptionBlocks || '<p class="text-xs text-slate-500">Sin descripción detallada</p>'}
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-200">Ubicación</p>
-                  <p class="text-sm text-slate-400">${escapeHtml(event.location || "Por definir")}</p>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                  ${tagsList || '<span class="text-xs text-slate-500">Sin etiquetas</span>'}
-                </div>
-              </div>
-            </details>
-          `;
-          eventList.appendChild(item);
-        });
+    if (eventPreviewPublished) {
+      eventPreviewPublished.innerHTML = published.length
+        ? published
+            .map(
+              (entry) =>
+                `<p class="rounded border border-slate-800 bg-slate-900/60 px-2 py-1 text-xs text-slate-300">${escapeHtml(
+                  String(entry.attributes.title ?? "")
+                )}</p>`
+            )
+            .join("")
+        : '<p class="text-xs text-slate-500">Sin publicaciones</p>';
     }
+  };
 
-    renderTeamPreviewList(
-      teamPreviewDraft,
-      state.teamMembers.filter((member) => member.status === "draft"),
-      "No hay integrantes en borrador"
-    );
-    renderTeamPreviewList(
-      teamPreviewPublished,
-      state.teamMembers.filter((member) => member.status === "published"),
-      "Aún no hay perfiles publicados"
-    );
-
-    renderEventPreviewList(
-      eventPreviewDraft,
-      state.events.filter((event) => event.status === "draft"),
-      "Sin eventos en borrador"
-    );
-    renderEventPreviewList(
-      eventPreviewPublished,
-      state.events.filter((event) => event.status === "published"),
-      "Aún no hay eventos publicados"
-    );
-
-    if (userList && canManageUsers) {
-      userList.innerHTML = "";
-      state.users
-        .slice()
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .forEach((user) => {
-          const item = document.createElement("li");
-          item.className =
-            "flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-950/40 p-4";
-          item.innerHTML = `
+  const renderMedia = () => {
+    if (!mediaLibraryList) return;
+    const assets = mediaLibrary.list();
+    if (!assets.length) {
+      mediaLibraryList.innerHTML =
+        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">Sube tus primeras imágenes o documentos para reutilizarlos en el sitio.</li>';
+      return;
+    }
+    mediaLibraryList.innerHTML = assets
+      .map(
+        (asset) => `
+        <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p class="font-semibold text-slate-100">${escapeHtml(user.username)}</p>
-              <p class="text-xs uppercase tracking-wide text-slate-500">${escapeHtml(user.role)}</p>
+              <p class="font-semibold text-slate-200">${escapeHtml(asset.name)}</p>
+              <p class="text-xs text-slate-400">${escapeHtml(asset.type)} · ${escapeHtml(
+          asset.createdBy
+        )}</p>
+              ${asset.altText ? `<p class="text-xs text-slate-500">Alt: ${escapeHtml(asset.altText)}</p>` : ""}
             </div>
-            <button
-              data-action="remove-user"
-              data-id="${user.id}"
-              class="rounded bg-rose-600/80 px-3 py-1 text-xs font-semibold text-rose-100 transition hover:bg-rose-600"
-            >
-              Eliminar
-            </button>
-          `;
-          userList.appendChild(item);
-        });
+            <div class="flex items-center gap-2 text-xs text-slate-500">
+              <span>${escapeHtml(toDateTime(asset.updatedAt))}</span>
+            </div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-2 text-xs">
+            <a href="${escapeHtml(asset.url)}" target="_blank" rel="noopener" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200">Abrir recurso</a>
+            <button type="button" class="rounded border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-teal-500 hover:text-teal-200" data-action="edit-asset" data-id="${asset.id}">Actualizar alt</button>
+            <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-asset" data-id="${asset.id}">Eliminar</button>
+          </div>
+        </li>
+      `
+      )
+      .join("");
+  };
+
+  const renderUsers = () => {
+    if (!userList) return;
+    const users = usersRolesPermissions.listUsers();
+    if (!users.length) {
+      userList.innerHTML =
+        '<li class="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-sm text-slate-400">No hay cuentas registradas.</li>';
+      return;
     }
+    userList.innerHTML = users
+      .map((user) => {
+        const capabilities = usersRolesPermissions.getRoleCapabilities(user.role);
+        const capabilitiesSummary = [
+          capabilities.manageUsers ? "Gestiona usuarios" : null,
+          capabilities.publish ? "Publica contenidos" : null,
+          capabilities.createSections ? "Crea entradas" : null,
+        ]
+          .filter(Boolean)
+          .join(" · ");
+        return `
+          <li class="rounded border border-slate-800 bg-slate-900/60 p-3 text-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="font-semibold text-slate-200">${escapeHtml(user.username)}</p>
+                <p class="text-xs text-slate-400">${escapeHtml(user.role)}</p>
+                <p class="text-[11px] text-slate-500">${escapeHtml(capabilitiesSummary)}</p>
+              </div>
+              <button type="button" class="rounded border border-rose-500/60 px-3 py-1 text-xs text-rose-200 transition hover:border-rose-400 hover:text-rose-100" data-action="delete-user" data-id="${user.id}">Eliminar</button>
+            </div>
+          </li>
+        `;
+      })
+      .join("");
+  };
+
+  const updateUserNavVisibility = () => {
+    const canManage = usersRolesPermissions.canCurrentUserManageUsers();
+    setHidden(userNavBtn, !canManage);
+    if (!canManage && activeView === "users") {
+      setView("content-types");
+    }
+  };
+
+  const renderAll = () => {
+    renderContentTypes();
+    populateContentTypeOptions();
+    renderSections();
+    renderTeam();
+    renderEvents();
+    renderMedia();
+    renderUsers();
+    updateUserNavVisibility();
+    const canPublishNow = store.canPublish();
+    updateStatusControl(
+      sectionForm?.elements.namedItem("status") as HTMLSelectElement | null,
+      canPublishNow
+    );
+    updateStatusControl(
+      teamForm?.elements.namedItem("status") as HTMLSelectElement | null,
+      canPublishNow
+    );
+    updateStatusControl(
+      eventForm?.elements.namedItem("status") as HTMLSelectElement | null,
+      canPublishNow
+    );
+  };
+
+  const resetForms = () => {
+    contentTypeForm?.reset();
+    contentFieldForm?.reset();
+    sectionForm?.reset();
+    teamForm?.reset();
+    eventForm?.reset();
+    mediaUploadForm?.reset();
+    userForm?.reset();
+  };
+
+  const afterLogin = () => {
+    setHidden(loginView, true);
+    setHidden(dashboard, false);
+    const user = usersRolesPermissions.currentUser();
+    if (currentUserLabel && user) {
+      currentUserLabel.textContent = user.username;
+    }
+    resetForms();
+    renderAll();
+    setView("content-types");
+  };
+
+  const handleLogout = () => {
+    store.logout();
+    resetForms();
+    setHidden(loginView, false);
+    setHidden(dashboard, true);
+    setMessage(loginError, "", "info");
+    setMessage(sectionFeedback, "", "info");
+    setMessage(teamFeedback, "", "info");
+    setMessage(eventFeedback, "", "info");
+    setMessage(mediaFeedback, "", "info");
+    setMessage(contentTypeFeedback, "", "info");
+    setMessage(contentFieldFeedback, "", "info");
+    setMessage(userFeedback, "", "info");
   };
 
   loginForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(loginForm);
     const username = String(formData.get("username") ?? "").trim();
-    const password = String(formData.get("password") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
     try {
       store.login(username, password);
-      setMessage(loginError, "", "info");
+      afterLogin();
     } catch (error) {
       setMessage(
         loginError,
-        error instanceof Error ? error.message : "No fue posible iniciar sesión",
+        error instanceof Error ? error.message : "No se pudo iniciar sesión",
         "error"
       );
     }
-    render();
   });
 
   logoutBtn?.addEventListener("click", () => {
-    store.logout();
-    sectionForm?.reset();
-    teamForm?.reset();
-    eventForm?.reset();
-    userForm?.reset();
-    cancelEditSectionBtn?.classList.add("hidden");
-    cancelTeamEditBtn?.classList.add("hidden");
-    cancelEventEditBtn?.classList.add("hidden");
-    setMessage(sectionFeedback, "", "info");
-    setMessage(teamFeedback, "", "info");
-    setMessage(eventFeedback, "", "info");
-    setView("content");
-    render();
+    handleLogout();
+  });
+
+  contentTypeForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(contentTypeForm);
+    try {
+      contentTypeBuilder.create({
+        displayName: String(formData.get("displayName") ?? ""),
+        description: String(formData.get("description") ?? ""),
+        category: String(formData.get("category") ?? ""),
+        icon: String(formData.get("icon") ?? ""),
+        draftAndPublish: formData.get("draftAndPublish") !== null,
+      });
+      contentTypeForm.reset();
+      setMessage(contentTypeFeedback, "Tipo de contenido creado.", "success");
+      renderContentTypes();
+      populateContentTypeOptions();
+    } catch (error) {
+      setMessage(
+        contentTypeFeedback,
+        error instanceof Error ? error.message : "No fue posible crear el tipo",
+        "error"
+      );
+    }
+  });
+
+  contentFieldForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(contentFieldForm);
+    const uid = String(formData.get("uid") ?? "");
+    const name = String(formData.get("name") ?? "");
+    const type = String(formData.get("type") ?? "string");
+    const required = formData.get("required") !== null;
+    try {
+      contentTypeBuilder.addField(uid, {
+        name,
+        type: type as ContentTypeDefinition["fields"][number]["type"],
+        required,
+        configurable: true,
+      });
+      setMessage(contentFieldFeedback, "Campo añadido correctamente.", "success");
+      contentFieldForm.reset();
+      renderContentTypes();
+    } catch (error) {
+      setMessage(
+        contentFieldFeedback,
+        error instanceof Error ? error.message : "No fue posible añadir el campo",
+        "error"
+      );
+    }
+  });
+
+  contentTypeList?.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+    const action = target.dataset.action;
+    const uid = target.dataset.contentType;
+    if (!action || !uid) return;
+    if (action === "delete-type") {
+      if (!confirm("¿Eliminar este tipo de contenido y sus entradas personalizadas?")) {
+        return;
+      }
+      try {
+        contentTypeBuilder.delete(uid);
+        renderContentTypes();
+        populateContentTypeOptions();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "No fue posible eliminar");
+      }
+      return;
+    }
+    if (action === "remove-field") {
+      const fieldId = target.dataset.field;
+      if (!fieldId) return;
+      try {
+        contentTypeBuilder.removeField(uid, fieldId);
+        renderContentTypes();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "No fue posible eliminar el campo");
+      }
+    }
   });
 
   sectionForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(sectionForm);
-    const sectionId = String(formData.get("sectionId") ?? "");
+    const id = String(formData.get("sectionId") ?? "");
     const payload = {
-      title: String(formData.get("title") ?? "").trim(),
-      content: String(formData.get("content") ?? "").trim(),
+      title: String(formData.get("title") ?? ""),
+      content: String(formData.get("content") ?? ""),
       status: String(formData.get("status") ?? "draft") as SectionStatus,
     };
     try {
-      if (sectionId) {
-        store.updateSection(sectionId, payload);
-        setMessage(sectionFeedback, "Sección actualizada correctamente", "success");
+      if (id) {
+        contentManager.updateEntry("sections", id, payload);
+        setMessage(sectionFeedback, "Sección actualizada.", "success");
       } else {
-        store.createSection(payload);
-        setMessage(sectionFeedback, "Sección creada correctamente", "success");
+        contentManager.createEntry("sections", payload);
+        setMessage(sectionFeedback, "Sección creada.", "success");
       }
       sectionForm.reset();
-      cancelEditSectionBtn?.classList.add("hidden");
+      renderSections();
     } catch (error) {
       setMessage(
         sectionFeedback,
-        error instanceof Error ? error.message : "No fue posible guardar",
+        error instanceof Error ? error.message : "No fue posible guardar la sección",
         "error"
       );
     }
-    render();
   });
 
   cancelEditSectionBtn?.addEventListener("click", () => {
     sectionForm?.reset();
+    setMessage(sectionFeedback, "", "info");
     cancelEditSectionBtn.classList.add("hidden");
-    setMessage(sectionFeedback, "Edición cancelada", "info");
   });
 
   sectionList?.addEventListener("click", (event) => {
-    const target = event.target as HTMLElement | null;
-    if (!target) return;
+    const target = event.target as HTMLElement;
     const action = target.dataset.action;
     const id = target.dataset.id;
-    if (!id) return;
-    if (action === "edit") {
-      const state = store.getState();
-      const section = state.sections.find((item) => item.id === id);
-      if (!section || !sectionForm) return;
-      const idField = sectionForm.querySelector<HTMLInputElement>("[name=sectionId]");
-      const titleField = sectionForm.querySelector<HTMLInputElement>("[name=title]");
-      const contentField =
-        sectionForm.querySelector<HTMLTextAreaElement>("[name=content]");
-      const statusField = sectionForm.querySelector<HTMLSelectElement>("[name=status]");
-      if (idField) idField.value = section.id;
-      if (titleField) titleField.value = section.title;
-      if (contentField) contentField.value = section.content;
-      if (statusField) statusField.value = section.status;
-      cancelEditSectionBtn?.classList.remove("hidden");
-      setMessage(sectionFeedback, "Editando sección seleccionada", "info");
-    }
-    if (action === "delete") {
-      try {
-        store.deleteSection(id);
-        setMessage(sectionFeedback, "Sección eliminada", "success");
-      } catch (error) {
-        setMessage(
-          sectionFeedback,
-          error instanceof Error ? error.message : "Sin permisos para eliminar",
-          "error"
-        );
+    if (!action || !id) return;
+    if (action === "edit-section" && sectionForm) {
+      const entry = contentManager.getEntry("sections", id);
+      if (!entry) return;
+      (sectionForm.elements.namedItem("sectionId") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        entry.id
+      );
+      (sectionForm.elements.namedItem("title") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.title ?? "")
+      );
+      (sectionForm.elements.namedItem("content") as HTMLTextAreaElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.content ?? "")
+      );
+      const statusSelect = sectionForm.elements.namedItem("status") as HTMLSelectElement | null;
+      if (statusSelect) {
+        statusSelect.value = entry.status;
       }
-      render();
+      cancelEditSectionBtn?.classList.remove("hidden");
+      setView("content-manager");
+      setMessage(sectionFeedback, "Editando sección existente.", "info");
+      return;
+    }
+    if (action === "delete-section") {
+      if (!confirm("¿Eliminar esta sección?") || !id) return;
+      try {
+        contentManager.deleteEntry("sections", id);
+        renderSections();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "No fue posible eliminar la sección");
+      }
     }
   });
 
   teamForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(teamForm);
-    const memberId = String(formData.get("memberId") ?? "");
-    const name = String(formData.get("name") ?? "").trim();
-    const baseData = {
-      name,
-      role: String(formData.get("role") ?? "").trim(),
-      image: String(formData.get("image") ?? "").trim(),
-      shortBio: String(formData.get("shortBio") ?? "").trim(),
+    const id = String(formData.get("memberId") ?? "");
+    const payload = {
+      name: String(formData.get("name") ?? ""),
+      role: String(formData.get("role") ?? ""),
+      image: String(formData.get("image") ?? ""),
+      shortBio: String(formData.get("shortBio") ?? ""),
       bio: parseParagraphs(String(formData.get("bio") ?? "")),
-      focus: String(formData.get("focus") ?? "").trim(),
+      focus: String(formData.get("focus") ?? ""),
       expertise: parseCommaSeparated(String(formData.get("expertise") ?? "")),
-      highlights: parseCommaSeparated(String(formData.get("highlights") ?? "")),
-      socials: [
-        { field: "social-instagram", platform: "instagram" },
-        { field: "social-facebook", platform: "facebook" },
-        { field: "social-linkedin", platform: "linkedin" },
-        { field: "social-web", platform: "web" },
-      ]
-        .map(({ field, platform }) => {
-          const url = String(formData.get(field) ?? "").trim();
-          if (!url) return null;
-          return {
-            platform,
-            label: buildSocialLabel(platform, name || "Integrante"),
-            url,
-          };
-        })
-        .filter(Boolean) as ManagedTeamMember["socials"],
+      highlights: parseParagraphs(String(formData.get("highlights") ?? "")),
+      socials: parseSocials(String(formData.get("socials") ?? ""), String(formData.get("name") ?? "")),
+      status: String(formData.get("status") ?? "draft") as SectionStatus,
     };
-    const status = String(formData.get("status") ?? "draft") as SectionStatus;
     try {
-      if (memberId) {
-        const updates: Partial<ManagedTeamMember> & { status?: SectionStatus } = {
-          ...baseData,
-        };
-        if (store.canPublish()) {
-          updates.status = status;
-        }
-        store.updateTeamMember(memberId, updates);
-        setMessage(teamFeedback, "Perfil actualizado", "success");
+      if (id) {
+        contentManager.updateEntry("team-members", id, payload);
+        setMessage(teamFeedback, "Integrante actualizado.", "success");
       } else {
-        const effectiveStatus = store.canPublish() ? status : "draft";
-        store.createTeamMember({
-          ...baseData,
-          status: effectiveStatus,
-        });
-        setMessage(teamFeedback, "Integrante creado", "success");
+        contentManager.createEntry("team-members", payload);
+        setMessage(teamFeedback, "Integrante añadido.", "success");
       }
       teamForm.reset();
       cancelTeamEditBtn?.classList.add("hidden");
+      renderTeam();
     } catch (error) {
       setMessage(
         teamFeedback,
-        error instanceof Error ? error.message : "No fue posible guardar el perfil",
+        error instanceof Error ? error.message : "No fue posible guardar el integrante",
         "error"
       );
     }
-    render();
   });
 
   cancelTeamEditBtn?.addEventListener("click", () => {
     teamForm?.reset();
     cancelTeamEditBtn.classList.add("hidden");
-    setMessage(teamFeedback, "Edición cancelada", "info");
+    setMessage(teamFeedback, "", "info");
   });
 
   teamList?.addEventListener("click", (event) => {
-    const target = event.target as HTMLElement | null;
-    if (!target) return;
+    const target = event.target as HTMLElement;
     const action = target.dataset.action;
     const id = target.dataset.id;
-    if (!id) return;
-    if (action === "edit-team") {
-      const state = store.getState();
-      const member = state.teamMembers.find((item) => item.id === id);
-      if (!member || !teamForm) return;
-      const idField = teamForm.querySelector<HTMLInputElement>("[name=memberId]");
-      const nameField = teamForm.querySelector<HTMLInputElement>("[name=name]");
-      const roleField = teamForm.querySelector<HTMLInputElement>("[name=role]");
-      const imageField = teamForm.querySelector<HTMLInputElement>("[name=image]");
-      const shortBioField = teamForm.querySelector<HTMLTextAreaElement>("[name=shortBio]");
-      const bioField = teamForm.querySelector<HTMLTextAreaElement>("[name=bio]");
-      const focusField = teamForm.querySelector<HTMLInputElement>("[name=focus]");
-      const expertiseField = teamForm.querySelector<HTMLInputElement>("[name=expertise]");
-      const highlightsField = teamForm.querySelector<HTMLInputElement>("[name=highlights]");
-      const statusField = teamForm.querySelector<HTMLSelectElement>("[name=status]");
-      const socialInstagram = teamForm.querySelector<HTMLInputElement>(
-        "[name=\"social-instagram\"]"
+    if (!action || !id) return;
+    if (action === "edit-member" && teamForm) {
+      const entry = contentManager.getEntry("team-members", id);
+      if (!entry) return;
+      (teamForm.elements.namedItem("memberId") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        entry.id
       );
-      const socialFacebook = teamForm.querySelector<HTMLInputElement>(
-        "[name=\"social-facebook\"]"
+      (teamForm.elements.namedItem("name") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.name ?? "")
       );
-      const socialLinkedin = teamForm.querySelector<HTMLInputElement>(
-        "[name=\"social-linkedin\"]"
+      (teamForm.elements.namedItem("role") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.role ?? "")
       );
-      const socialWeb = teamForm.querySelector<HTMLInputElement>("[name=\"social-web\"]");
-      if (idField) idField.value = member.id;
-      if (nameField) nameField.value = member.name;
-      if (roleField) roleField.value = member.role;
-      if (imageField) imageField.value = member.image;
-      if (shortBioField) shortBioField.value = member.shortBio;
-      if (bioField) bioField.value = member.bio.join("\n");
-      if (focusField) focusField.value = member.focus;
-      if (expertiseField) expertiseField.value = member.expertise.join(", ");
-      if (highlightsField) highlightsField.value = member.highlights.join(", ");
-      if (statusField) statusField.value = member.status;
-      const findSocial = (platform: string) =>
-        member.socials.find((item) => item.platform === platform)?.url ?? "";
-      if (socialInstagram) socialInstagram.value = findSocial("instagram");
-      if (socialFacebook) socialFacebook.value = findSocial("facebook");
-      if (socialLinkedin) socialLinkedin.value = findSocial("linkedin");
-      if (socialWeb) socialWeb.value = findSocial("web");
-      cancelTeamEditBtn?.classList.remove("hidden");
-      setMessage(teamFeedback, "Editando integrante seleccionado", "info");
-    }
-    if (action === "delete-team") {
-      try {
-        store.deleteTeamMember(id);
-        setMessage(teamFeedback, "Integrante eliminado", "success");
-      } catch (error) {
-        setMessage(
-          teamFeedback,
-          error instanceof Error ? error.message : "No fue posible eliminar",
-          "error"
-        );
+      (teamForm.elements.namedItem("image") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.image ?? "")
+      );
+      (teamForm.elements.namedItem("shortBio") as HTMLTextAreaElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.shortBio ?? "")
+      );
+      (teamForm.elements.namedItem("focus") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.focus ?? "")
+      );
+      (teamForm.elements.namedItem("bio") as HTMLTextAreaElement | null)?.setAttribute(
+        "value",
+        (entry.attributes.bio as string[] | undefined)?.join("\n") ?? ""
+      );
+      (teamForm.elements.namedItem("expertise") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        Array.isArray(entry.attributes.expertise)
+          ? (entry.attributes.expertise as string[]).join(", ")
+          : ""
+      );
+      (teamForm.elements.namedItem("highlights") as HTMLTextAreaElement | null)?.setAttribute(
+        "value",
+        (entry.attributes.highlights as string[] | undefined)?.join("\n") ?? ""
+      );
+      (teamForm.elements.namedItem("socials") as HTMLTextAreaElement | null)?.setAttribute(
+        "value",
+        JSON.stringify(entry.attributes.socials ?? [], null, 2)
+      );
+      const statusSelect = teamForm.elements.namedItem("status") as HTMLSelectElement | null;
+      if (statusSelect) {
+        statusSelect.value = entry.status;
       }
-      render();
+      cancelTeamEditBtn?.classList.remove("hidden");
+      setView("content-manager");
+      setMessage(teamFeedback, "Editando integrante.", "info");
+      return;
+    }
+    if (action === "delete-member") {
+      if (!confirm("¿Eliminar este integrante?")) return;
+      try {
+        contentManager.deleteEntry("team-members", id);
+        renderTeam();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "No fue posible eliminar el integrante");
+      }
     }
   });
 
   eventForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(eventForm);
-    const eventId = String(formData.get("eventId") ?? "");
-    const baseData = {
-      title: String(formData.get("title") ?? "").trim(),
-      shortDescription: String(formData.get("shortDescription") ?? "").trim(),
+    const id = String(formData.get("eventId") ?? "");
+    const payload = {
+      title: String(formData.get("title") ?? ""),
+      shortDescription: String(formData.get("shortDescription") ?? ""),
       description: parseParagraphs(String(formData.get("description") ?? "")),
-      date: String(formData.get("date") ?? "").trim(),
-      image: String(formData.get("image") ?? "").trim(),
-      location: String(formData.get("location") ?? "").trim(),
+      date: String(formData.get("date") ?? new Date().toISOString()),
+      image: String(formData.get("image") ?? ""),
+      location: String(formData.get("location") ?? ""),
       tags: parseCommaSeparated(String(formData.get("tags") ?? "")),
+      status: String(formData.get("status") ?? "draft") as SectionStatus,
     };
-    const status = String(formData.get("status") ?? "draft") as SectionStatus;
     try {
-      if (eventId) {
-        const updates: Partial<ManagedEvent> & { status?: SectionStatus } = {
-          ...baseData,
-        };
-        if (store.canPublish()) {
-          updates.status = status;
-        }
-        store.updateEvent(eventId, updates);
-        setMessage(eventFeedback, "Evento actualizado", "success");
+      if (id) {
+        contentManager.updateEntry("events", id, payload);
+        setMessage(eventFeedback, "Evento actualizado.", "success");
       } else {
-        const effectiveStatus = store.canPublish() ? status : "draft";
-        store.createEvent({
-          ...baseData,
-          status: effectiveStatus,
-        });
-        setMessage(eventFeedback, "Evento creado", "success");
+        contentManager.createEntry("events", payload);
+        setMessage(eventFeedback, "Evento creado.", "success");
       }
       eventForm.reset();
       cancelEventEditBtn?.classList.add("hidden");
+      renderEvents();
     } catch (error) {
       setMessage(
         eventFeedback,
@@ -816,60 +897,124 @@ if (!root) {
         "error"
       );
     }
-    render();
   });
 
   cancelEventEditBtn?.addEventListener("click", () => {
     eventForm?.reset();
     cancelEventEditBtn.classList.add("hidden");
-    setMessage(eventFeedback, "Edición cancelada", "info");
+    setMessage(eventFeedback, "", "info");
   });
 
   eventList?.addEventListener("click", (event) => {
-    const target = event.target as HTMLElement | null;
-    if (!target) return;
+    const target = event.target as HTMLElement;
     const action = target.dataset.action;
     const id = target.dataset.id;
-    if (!id) return;
-    if (action === "edit-event") {
-      const state = store.getState();
-      const record = state.events.find((item) => item.id === id);
-      if (!record || !eventForm) return;
-      const idField = eventForm.querySelector<HTMLInputElement>("[name=eventId]");
-      const titleField = eventForm.querySelector<HTMLInputElement>("[name=title]");
-      const shortDescField = eventForm.querySelector<HTMLTextAreaElement>(
-        "[name=shortDescription]"
+    if (!action || !id) return;
+    if (action === "edit-event" && eventForm) {
+      const entry = contentManager.getEntry("events", id);
+      if (!entry) return;
+      (eventForm.elements.namedItem("eventId") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        entry.id
       );
-      const descField = eventForm.querySelector<HTMLTextAreaElement>("[name=description]");
-      const dateField = eventForm.querySelector<HTMLInputElement>("[name=date]");
-      const imageField = eventForm.querySelector<HTMLInputElement>("[name=image]");
-      const locationField = eventForm.querySelector<HTMLInputElement>("[name=location]");
-      const tagsField = eventForm.querySelector<HTMLInputElement>("[name=tags]");
-      const statusField = eventForm.querySelector<HTMLSelectElement>("[name=status]");
-      if (idField) idField.value = record.id;
-      if (titleField) titleField.value = record.title;
-      if (shortDescField) shortDescField.value = record.shortDescription;
-      if (descField) descField.value = record.description.join("\n");
-      if (dateField) dateField.value = record.date.slice(0, 10);
-      if (imageField) imageField.value = record.image;
-      if (locationField) locationField.value = record.location;
-      if (tagsField) tagsField.value = record.tags.join(", ");
-      if (statusField) statusField.value = record.status;
+      (eventForm.elements.namedItem("title") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.title ?? "")
+      );
+      (eventForm.elements.namedItem("shortDescription") as HTMLTextAreaElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.shortDescription ?? "")
+      );
+      (eventForm.elements.namedItem("description") as HTMLTextAreaElement | null)?.setAttribute(
+        "value",
+        Array.isArray(entry.attributes.description)
+          ? (entry.attributes.description as string[]).join("\n")
+          : ""
+      );
+      (eventForm.elements.namedItem("date") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.date ?? "").slice(0, 10)
+      );
+      (eventForm.elements.namedItem("image") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.image ?? "")
+      );
+      (eventForm.elements.namedItem("location") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        String(entry.attributes.location ?? "")
+      );
+      (eventForm.elements.namedItem("tags") as HTMLInputElement | null)?.setAttribute(
+        "value",
+        Array.isArray(entry.attributes.tags)
+          ? (entry.attributes.tags as string[]).join(", ")
+          : ""
+      );
+      const statusSelect = eventForm.elements.namedItem("status") as HTMLSelectElement | null;
+      if (statusSelect) {
+        statusSelect.value = entry.status;
+      }
       cancelEventEditBtn?.classList.remove("hidden");
-      setMessage(eventFeedback, "Editando evento seleccionado", "info");
+      setView("content-manager");
+      setMessage(eventFeedback, "Editando evento.", "info");
+      return;
     }
     if (action === "delete-event") {
+      if (!confirm("¿Eliminar este evento?")) return;
       try {
-        store.deleteEvent(id);
-        setMessage(eventFeedback, "Evento eliminado", "success");
+        contentManager.deleteEntry("events", id);
+        renderEvents();
       } catch (error) {
-        setMessage(
-          eventFeedback,
-          error instanceof Error ? error.message : "No fue posible eliminar",
-          "error"
-        );
+        alert(error instanceof Error ? error.message : "No fue posible eliminar el evento");
       }
-      render();
+    }
+  });
+
+  mediaUploadForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(mediaUploadForm);
+    try {
+      mediaLibrary.upload({
+        name: String(formData.get("name") ?? ""),
+        url: String(formData.get("url") ?? ""),
+        type: String(formData.get("type") ?? "image") as MediaAsset["type"],
+        altText: String(formData.get("altText") ?? "") || undefined,
+      });
+      mediaUploadForm.reset();
+      setMessage(mediaFeedback, "Archivo registrado correctamente.", "success");
+      renderMedia();
+    } catch (error) {
+      setMessage(
+        mediaFeedback,
+        error instanceof Error ? error.message : "No fue posible registrar el archivo",
+        "error"
+      );
+    }
+  });
+
+  mediaLibraryList?.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+    const action = target.dataset.action;
+    const id = target.dataset.id;
+    if (!action || !id) return;
+    if (action === "delete-asset") {
+      if (!confirm("¿Eliminar este archivo de la biblioteca?")) return;
+      try {
+        mediaLibrary.remove(id);
+        renderMedia();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "No fue posible eliminar el recurso");
+      }
+      return;
+    }
+    if (action === "edit-asset") {
+      const newAlt = prompt("Texto alternativo", "");
+      if (newAlt === null) return;
+      try {
+        mediaLibrary.update(id, { altText: newAlt || undefined });
+        renderMedia();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "No fue posible actualizar el recurso");
+      }
     }
   });
 
@@ -877,14 +1022,15 @@ if (!root) {
     event.preventDefault();
     const formData = new FormData(userForm);
     const payload = {
-      username: String(formData.get("username") ?? "").trim(),
-      password: String(formData.get("password") ?? "").trim(),
-      role: String(formData.get("role") ?? ROLES[0]),
+      username: String(formData.get("username") ?? ""),
+      password: String(formData.get("password") ?? ""),
+      role: String(formData.get("role") ?? ROLES[0] ?? "Editor"),
     };
     try {
-      store.createUser(payload);
+      usersRolesPermissions.createUser(payload);
       userForm.reset();
-      setMessage(userFeedback, "Usuario creado", "success");
+      setMessage(userFeedback, "Usuario creado correctamente.", "success");
+      renderUsers();
     } catch (error) {
       setMessage(
         userFeedback,
@@ -892,29 +1038,28 @@ if (!root) {
         "error"
       );
     }
-    render();
   });
 
   userList?.addEventListener("click", (event) => {
-    const target = event.target as HTMLElement | null;
-    if (!target) return;
+    const target = event.target as HTMLElement;
     const action = target.dataset.action;
     const id = target.dataset.id;
-    if (action === "remove-user" && id) {
+    if (!action || !id) return;
+    if (action === "delete-user") {
+      if (!confirm("¿Eliminar esta cuenta de administración?")) return;
       try {
-        store.deleteUser(id);
-        setMessage(userFeedback, "Usuario eliminado", "success");
+        usersRolesPermissions.deleteUser(id);
+        renderUsers();
       } catch (error) {
-        setMessage(
-          userFeedback,
-          error instanceof Error ? error.message : "No fue posible eliminar",
-          "error"
-        );
+        alert(error instanceof Error ? error.message : "No fue posible eliminar el usuario");
       }
-      render();
     }
   });
 
-  store.subscribe(render);
-  render();
+  const initialState = store.getState();
+  if (initialState.currentUserId) {
+    afterLogin();
+  } else {
+    handleLogout();
+  }
 }
