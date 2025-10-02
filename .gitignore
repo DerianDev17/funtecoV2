@@ -1,0 +1,18 @@
+# Dependencias de Node.js
+node_modules/
+
+# Archivos de compilación y distribución de Astro
+dist/
+.astro/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de entorno local
+.env
+.env.*
+!.env.example
+
+# Archivos específicos de editores o IDEs
+.vscode/

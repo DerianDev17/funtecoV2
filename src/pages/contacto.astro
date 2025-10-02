@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<BaseLayout title="Contacto" description="Ponte en contacto con Funteco para colaborar o recibir información"> 
+  <Header current="/contacto" />
+  <section class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-primary mb-6 text-center">Contáctanos</h1>
+      <div class="grid gap-8 md:grid-cols-2">
+        <div>
+          <h2 class="text-2xl font-semibold mb-4">Información de contacto</h2>
+          <ul class="space-y-4 text-lg">
+            <li class="flex items-start">
+              <span class="text-primary mr-3"><svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 10.5V16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5.5"></path><path d="M15 3h6v6"></path><path d="M21 3L10 14"></path></svg></span>
+              <span>Dirección: Quito, Ecuador</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-primary mr-3"><svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12.083C21.045 12.61 19.99 13 18.873 13c-3.987 0-7.212-3.134-7.873-7H8v3H5V6H2V3h6.873c.92 5.38 5.596 9 10.127 9 1.117 0 2.172-.388 3.127-.916v4.999l4 .001V12l-4 .083z"></path></svg></span>
+              <span>Teléfono: +593 99 123 456</span>
+            </li>
+            <li class="flex items-start">
+              <span class="text-primary mr-3"><svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity=".2"></path><path d="M22 6l-10 7L2 6"></path><path d="M2 6v12h20V6"></path></svg></span>
+              <span>Email: <a href="mailto:contacto@funteco.org" class="text-primary underline">contacto@funteco.org</a></span>
+            </li>
+          </ul>
+          <p class="mt-6 text-gray-700">Síguenos en redes sociales para conocer nuestras noticias y eventos.</p>
+        </div>
+        <div>
+          <form action="mailto:contacto@funteco.org" method="post" enctype="text/plain" class="space-y-4">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+              <input type="text" id="name" name="Nombre" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+              <input type="email" id="email" name="Email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" />
+            </div>
+            <div>
+              <label for="subject" class="block text-sm font-medium text-gray-700">Asunto</label>
+              <input type="text" id="subject" name="Asunto" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" />
+            </div>
+            <div>
+              <label for="message" class="block text-sm font-medium text-gray-700">Mensaje</label>
+              <textarea id="message" name="Mensaje" rows="5" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"></textarea>
+            </div>
+            <div>
+              <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">Enviar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</BaseLayout>

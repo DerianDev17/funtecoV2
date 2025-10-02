@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<BaseLayout title="Inicio" description="Funteco – Investigando y educando para un futuro inclusivo" >
+  <Header current="/" />
+  <!-- Hero section -->
+  <section class="relative bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/carousel-1.jpg');">
+    <div class="absolute inset-0 bg-gray-900 bg-opacity-60"></div>
+    <div class="relative max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8 text-center text-white">
+      <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">Impulsando el progreso a través de la investigación y la educación</h1>
+      <p class="text-lg sm:text-xl mb-8">Tejiendo conocimiento para un futuro prometedor.</p>
+      <a href="/about" class="inline-block bg-primary text-white px-6 py-3 rounded-md shadow hover:bg-primary-dark transition-colors">Conoce nuestra misión</a>
+    </div>
+  </section>
+
+  <!-- Programas section -->
+  <section class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold mb-8">Nuestros ejes</h2>
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+          <div class="mb-4 text-primary">
+            <!-- icon of research using heroicons or inline SVG -->
+            <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M12 9v6"></path><circle cx="12" cy="12" r="9"></circle></svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Investigación</h3>
+          <p class="text-gray-600">Promovemos estudios y publicaciones que visibilizan las realidades de las comunidades afrodescendientes y personas en movilidad.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+          <div class="mb-4 text-primary">
+            <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6H4z"></path><path d="M4 14h16v6H4z"></path></svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Educación</h3>
+          <p class="text-gray-600">Capacitamos a líderes y jóvenes mediante talleres, cursos y eventos educativos que fomentan la inclusión y el respeto.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+          <div class="mb-4 text-primary">
+            <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"></path><path d="M3 12h18"></path><path d="M3 17h18"></path></svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Comunidad</h3>
+          <p class="text-gray-600">Fortalecemos redes de apoyo y espacios de encuentro para construir un tejido social equitativo y solidario.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Eventos section preview -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-center mb-8">Próximos eventos</h2>
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Evento 1 -->
+        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition">
+          <img src="https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/13.jpg" alt="Taller de derechos humanos" class="w-full h-40 object-cover" loading="lazy" />
+          <div class="p-4">
+            <h3 class="text-xl font-semibold mb-2">Taller de derechos humanos</h3>
+            <p class="text-gray-600 mb-2">Explora herramientas prácticas para la defensa y promoción de los derechos de mujeres migrantes.</p>
+            <p class="text-sm text-gray-500">Próximo mes</p>
+          </div>
+        </div>
+        <!-- Evento 2 -->
+        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition">
+          <img src="https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/14.jpg" alt="Foro de investigación social" class="w-full h-40 object-cover" loading="lazy" />
+          <div class="p-4">
+            <h3 class="text-xl font-semibold mb-2">Foro de investigación social</h3>
+            <p class="text-gray-600 mb-2">Encuentro con especialistas para debatir desafíos y oportunidades en la región andina.</p>
+            <p class="text-sm text-gray-500">Octubre 2025</p>
+          </div>
+        </div>
+        <!-- Evento 3 -->
+        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition">
+          <img src="https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/15.jpeg" alt="Festival cultural afrodescendiente" class="w-full h-40 object-cover" loading="lazy" />
+          <div class="p-4">
+            <h3 class="text-xl font-semibold mb-2">Festival cultural afrodescendiente</h3>
+            <p class="text-gray-600 mb-2">Celebración de la diversidad y la herencia afroecuatoriana a través del arte y la música.</p>
+            <p class="text-sm text-gray-500">Diciembre 2025</p>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-8">
+        <a href="/eventos" class="text-primary hover:underline font-medium">Ver todos los eventos &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="py-16 bg-primary text-white text-center">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-4">Únete a nuestra causa</h2>
+      <p class="mb-6">Puedes colaborar participando en nuestros programas, asistiendo a eventos o haciendo un donativo. Cada acción cuenta.</p>
+      <a href="/contacto" class="inline-block bg-white text-primary font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100">Contáctanos</a>
+    </div>
+  </section>
+  <Footer />
+</BaseLayout>

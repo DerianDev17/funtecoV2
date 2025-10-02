@@ -1,0 +1,17 @@
+---
+// Recibe título y descripción para SEO
+const { title, description } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title ? `${title} | Funteco` : 'Funteco'}</title>
+    <meta name="description" content={description || 'Fundación Tejiendo Conocimientos – investigación, educación y comunidad'} />
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+  <body class="font-sans antialiased text-gray-800 bg-white">
+    <slot />
+  </body>
+</html>
