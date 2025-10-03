@@ -2,8 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import TeamGrid from '../components/TeamGrid.astro';
-import { teamMembers } from '../data/team';
+import TeamGrid from "../components/TeamGrid.astro";
+import { getTeamMembers } from "../utils/strapiContent";
+
+const teamMembers = await getTeamMembers();
 ---
 <BaseLayout title="Nosotras" description="Conoce al equipo feminista afro de Funteco que teje investigación, educación y cuidado comunitario en Ecuador.">
   <Header current="/about" />

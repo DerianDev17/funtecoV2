@@ -65,9 +65,15 @@ Una vez instaladas las dependencias, puedes ejecutar los siguientes comandos:
 - `pnpm preview` – Previsualiza el sitio de producción generado en `dist/`.
 - `pnpm test` – Ejecuta la suite de Vitest, incluyendo las pruebas del módulo administrativo.
 
-## Documentación del panel administrativo
+## Integración con Strapi
 
-En `docs/strapi-admin.md` encontrarás un resumen de los módulos inspirados en Strapi (Content-type Builder, Content Manager, Media Library y Users, Roles & Permissions), junto con detalles sobre personalización y pruebas.
+El proyecto ahora obtiene el contenido desde un backend de Strapi creado con la guía oficial de [Quick Start](https://docs.strapi.io/cms/quick-start). Sigue estos pasos para conectarlo:
+
+1. Genera el backend ejecutando `npx create-strapi-app@latest strapi-backend --quickstart` y crea la cuenta administradora.
+2. Configura las colecciones `events` y `team-members` según la tabla descrita en `docs/strapi-admin.md`.
+3. Crea un API Token de solo lectura y define las variables `PUBLIC_STRAPI_URL` y `STRAPI_API_TOKEN` antes de construir el sitio.
+
+Los helpers de `src/utils/strapiContent.ts` consultan las colecciones y, si la API no está disponible, recurren a los datos de respaldo existentes en `src/data`. Consulta `docs/strapi-admin.md` para ver la guía completa.
 
 ## Buenas prácticas y próximos pasos
 

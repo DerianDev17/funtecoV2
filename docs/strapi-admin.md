@@ -1,42 +1,85 @@
-# Panel administrativo inspirado en Strapi
+# Integración con el panel oficial de Strapi
 
-Este proyecto incorpora un panel de administración basado en la filosofía de módulos de [Strapi](https://docs.strapi.io). El objetivo es ofrecer una experiencia similar a la consola oficial —con constructor de tipos de contenido, gestor de entradas, biblioteca de medios y control de usuarios— pero adaptada a las necesidades del MVP.
+El panel personalizado fue reemplazado por la consola oficial de [Strapi](https://docs.strapi.io). Ahora el sitio de Funteco consume la información directamente del CMS siguiendo los pasos del [Quick Start](https://docs.strapi.io/cms/quick-start). Esta guía resume el flujo de instalación y la configuración necesaria para que el frontend funcione con datos en tiempo real.
 
-## Módulos disponibles
+## 1. Crear el proyecto de Strapi
 
-### Content-type Builder
-- Crea colecciones personalizadas indicando nombre visible, descripción, categoría e icono.
-- Añade o elimina campos compatibles con Strapi (`string`, `text`, `richtext`, `uid`, `media`, `enumeration`, `json`, `date`, `datetime`, `boolean`, `number`, `relation`).
-- Bloquea la eliminación de los tipos base (secciones, integrantes y eventos) para preservar la configuración esencial del sitio.
+1. Instala las dependencias con el asistente oficial:
 
-### Content Manager
-- Gestiona las colecciones base y las personalizadas con estados `draft` y `published`.
-- Respeta las reglas de publicación por rol (por ejemplo, las personas colaboradoras solo pueden crear borradores).
-- Admite edición en línea, vista previa de estados y acciones de eliminación.
+   ```bash
+   npx create-strapi-app@latest strapi-backend --quickstart
+   ```
 
-### Media Library
-- Registra imágenes, documentos y otros recursos (se asume una URL pública).
-- Permite editar el texto alternativo y eliminar activos. Los recursos asociados a entradas se agregan automáticamente.
+   El modo _quickstart_ utiliza SQLite y levanta el panel en `http://localhost:1337/admin`.
 
-### Users, Roles & Permissions
-- Administra cuentas internas, asigna los roles definidos y muestra sus capacidades según la matriz oficial de Strapi.
-- Restringe el acceso al módulo si la persona autenticada no posee permisos de gestión.
+2. Durante el primer arranque el asistente solicitará crear la cuenta administradora. Guarda las credenciales para compartirlas con el equipo.
 
-## Flujo de autenticación
-1. Ingresar con las credenciales existentes (`admin`/`admin123`, `moderador`/`mod123`, etc.).
-2. Al iniciar sesión, el panel recuerda el usuario en `localStorage` para mantener la sesión.
-3. Cerrar sesión revierte la aplicación al modo de acceso protegido.
+## 2. Definir los tipos de contenido
 
-## Personalización
-- Los nuevos tipos de contenido se almacenan en `localStorage` bajo la clave `funteco-strapi-modules` para facilitar prototipos sin backend.
-- Puedes extender los campos permitidos en `src/utils/strapiAdmin.ts` si necesitas componentes adicionales.
-- Las entradas de colecciones personalizadas admiten cualquier estructura basada en los campos configurados.
+En el panel de Strapi crea dos colecciones para replicar la estructura utilizada en el frontend:
 
-## Pruebas unitarias
-Las pruebas de Vitest (`pnpm test`) validan:
-- Autenticación y permisos por rol.
-- Creación, actualización y eliminación de tipos de contenido y campos.
-- Gestión de entradas para colecciones base y personalizadas.
-- Operaciones de la biblioteca multimedia y persistencia en almacenamiento local.
+### Colección `events`
 
-Para añadir nuevas validaciones, utiliza `createStrapiAdmin` y los módulos expuestos en `src/utils/strapiAdmin.ts` como harías con el SDK oficial de Strapi.
+Campos sugeridos:
+
+| Campo              | Tipo          | Opciones                                                  |
+| ------------------ | ------------- | --------------------------------------------------------- |
+| `title`            | Text          | Required                                                  |
+| `slug`             | UID           | Basado en `title`                                         |
+| `shortDescription` | Text          | Required                                                  |
+| `description`      | Rich Text     | Required                                                  |
+| `date`             | Date          | Required                                                  |
+| `location`         | Text          | Required                                                  |
+| `tags`             | JSON          | Guarda un arreglo de etiquetas (por ejemplo `["cultura"]`) |
+| `image`            | Media (Single)| Requerido                                                 |
+
+Publica algunos eventos de prueba para verificar la integración.
+
+### Colección `team-members`
+
+Campos sugeridos:
+
+| Campo          | Tipo          | Opciones                                                               |
+| -------------- | ------------- | ---------------------------------------------------------------------- |
+| `name`         | Text          | Required                                                               |
+| `slug`         | UID           | Basado en `name`                                                       |
+| `role`         | Text          | Required                                                               |
+| `shortBio`     | Text          | Required                                                               |
+| `bio`          | Rich Text     | Required                                                               |
+| `focus`        | Text          | Required                                                               |
+| `expertise`    | JSON          | Arreglo de áreas de especialización                                   |
+| `highlights`   | JSON          | Arreglo de logros o aportes destacados                                 |
+| `socials`      | JSON          | Arreglo con objetos `{ "platform": "instagram", "label": "…", "url": "…" }` |
+| `image`        | Media (Single)| Requerido                                                              |
+
+Publica cada perfil para que sea visible desde la API pública.
+
+## 3. Crear un token de API
+
+1. Ve a **Settings → API Tokens** y genera un token de tipo _Read-only_.
+2. Copia el valor y guárdalo como una variable de entorno:
+
+   ```bash
+   export STRAPI_API_TOKEN="tu_token"
+   export PUBLIC_STRAPI_URL="http://localhost:1337"
+   ```
+
+3. El frontend utiliza estas variables para conectarse durante el build y en tiempo de ejecución.
+
+## 4. ¿Cómo usa el frontend la API?
+
+- Las páginas de Astro llaman a los helpers de `src/utils/strapiContent.ts`.
+- Cada helper consulta la colección correspondiente (`/api/events`, `/api/team-members`) y transforma la respuesta al formato que esperan los componentes.
+- Si la API no está disponible, se recurre a los datos de respaldo definidos en `src/data/eventsFallback.ts` y `src/data/team.json`.
+
+## 5. Pruebas automatizadas
+
+Ejecuta `pnpm test` para validar que los helpers de Strapi sigan funcionando. Las pruebas simulan respuestas de la API y verifican la conversión de datos y los mecanismos de respaldo.
+
+## 6. Próximos pasos
+
+- Habilita roles y permisos según las necesidades del equipo desde **Settings → Users & Permissions**.
+- Configura el despliegue del backend en el servicio de tu preferencia (Railway, Render, Heroku, etc.).
+- Automatiza la sincronización de datos ejecutando `npm run develop` en `strapi-backend` durante el desarrollo local.
+
+Con esta configuración el sitio de Funteco se alimenta 100 % del CMS oficial, manteniendo la flexibilidad de Strapi y eliminando la capa de administración simulada.

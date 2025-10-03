@@ -1,15 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { teamMembers } from '../../data/team';
-import type { TeamMember } from '../../data/team';
-import { socialIconMap } from '../../utils/socialIcons';
+import Footer from "../../components/Footer.astro";
+import { getTeamMembers, type TeamMember } from "../../utils/strapiContent";
+import { socialIconMap } from "../../utils/socialIcons";
 
 export async function getStaticPaths() {
+  const teamMembers = await getTeamMembers();
   return teamMembers.map((member) => ({
     params: { slug: member.slug },
-    props: { member }
+    props: { member },
   }));
 }
 

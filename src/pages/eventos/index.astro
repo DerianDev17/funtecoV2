@@ -2,10 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import EventCard from '../../components/EventCard.astro';
-import { events } from '../../data/events';
+import EventCard from "../../components/EventCard.astro";
+import { getEvents } from "../../utils/strapiContent";
 
-const orderedEvents = [...events].sort((a, b) => a.date.localeCompare(b.date));
+const orderedEvents = (await getEvents()).sort((a, b) => a.date.localeCompare(b.date));
 ---
 <BaseLayout title="Eventos" description="Consulta nuestros eventos, talleres y festivales organizados por Funteco en Ecuador" canonical="https://www.fundaciontejiendoconocimiento.com/eventos">
   <Header current="/eventos" />

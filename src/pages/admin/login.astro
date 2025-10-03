@@ -1,60 +1,31 @@
 ---
 import AdminLayout from "../../layouts/AdminLayout.astro";
-import adminLoginScript from "../../scripts/adminLogin.ts?url";
----
-<AdminLayout title="Acceso administrativo">
-  <section
-    id="admin-login-app"
-    class="flex min-h-[540px] flex-col items-center justify-center gap-8 rounded-3xl border border-slate-800/60 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950/80 px-6 py-16 text-center shadow-2xl shadow-slate-950/60 ring-1 ring-slate-900/60"
-  >
-    <div class="w-full max-w-md space-y-6 rounded-3xl border border-slate-800/60 bg-slate-950/80 p-10 text-left shadow-xl">
-      <header class="space-y-2">
-        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-          Panel privado
-        </p>
-        <h2 class="text-2xl font-semibold text-teal-200">Acceso al dashboard</h2>
-        <p class="text-sm text-slate-400">
-          Introduce tus credenciales internas para gestionar colecciones, contenidos y medios.
-        </p>
-      </header>
-      <form id="login-form" class="space-y-5" novalidate>
-        <label class="block text-sm">
-          <span class="mb-1 block font-medium text-slate-200">Usuario</span>
-          <input
-            name="username"
-            type="text"
-            autocomplete="username"
-            required
-            class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-          />
-        </label>
-        <label class="block text-sm">
-          <span class="mb-1 block font-medium text-slate-200">Contraseña</span>
-          <input
-            name="password"
-            type="password"
-            autocomplete="current-password"
-            required
-            class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-          />
-        </label>
-        <button
-          type="submit"
-          class="w-full rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
-        >
-          Entrar
-        </button>
-      </form>
-      <p
-        id="login-error"
-        role="alert"
-        class="hidden rounded-xl border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
-      ></p>
-    </div>
-    <p class="max-w-lg text-xs text-slate-500">
-      Si no reconoces esta pantalla ponte en contacto con el equipo de FunTeco. Las credenciales son personales e intransferibles.
-    </p>
-  </section>
-</AdminLayout>
+import { getStrapiBaseUrl } from "../../utils/strapiClient";
 
-<script type="module" src={adminLoginScript}></script>
+const strapiBaseUrl = getStrapiBaseUrl();
+const adminUrl = `${strapiBaseUrl.replace(/\/$/, "")}/admin`;
+---
+<AdminLayout title="Acceso al panel de Strapi">
+  <div class="space-y-8 rounded-3xl border border-slate-800/70 bg-slate-950/70 p-8 shadow-xl shadow-slate-950/40">
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold text-teal-200">Inicia sesión en Strapi</h2>
+      <p class="text-sm text-slate-300">
+        El panel personalizado se ha reemplazado por el dashboard oficial de Strapi. Dirígete a
+        <a href={adminUrl} class="font-semibold text-teal-300 underline hover:text-teal-100">{adminUrl}</a>
+        para autenticarte. Allí podrás crear tipos de contenido, gestionar entradas y administrar roles.
+      </p>
+      <p class="rounded-2xl border border-teal-500/30 bg-teal-500/5 p-4 text-xs text-teal-100">
+        Consejo: activa la opción <em>Remember me</em> del formulario de Strapi para conservar la sesión mientras desarrollas el sitio.
+      </p>
+    </section>
+
+    <section class="space-y-4">
+      <h3 class="text-base font-semibold text-teal-100">¿Cómo obtengo las credenciales?</h3>
+      <ul class="space-y-3 text-sm text-slate-300">
+        <li>La primera persona que accede al panel crea la cuenta administradora mediante el asistente inicial.</li>
+        <li>Desde <strong>Settings → Users</strong> puedes generar usuarios adicionales y asignarles roles.</li>
+        <li>Para conectar el frontend con la API, crea un token en <strong>Settings → API Tokens</strong> con permisos de lectura.</li>
+      </ul>
+    </section>
+  </div>
+</AdminLayout>
