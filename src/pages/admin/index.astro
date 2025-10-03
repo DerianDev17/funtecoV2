@@ -6,58 +6,12 @@ import adminDashboardScript from "../../scripts/adminDashboard.ts?url";
 <AdminLayout title="Centro de control">
   <div
     id="admin-app"
-    class="min-h-[720px] rounded-3xl border border-slate-800/60 bg-slate-950/70 shadow-2xl shadow-slate-950/60 ring-1 ring-slate-900/60"
+    data-auth-state="pending"
+    class="hidden min-h-[720px] rounded-3xl border border-slate-800/60 bg-slate-950/70 opacity-0 shadow-2xl shadow-slate-950/60 ring-1 ring-slate-900/60 transition-opacity"
   >
     <section
-      id="login-view"
-      class="flex h-full flex-col items-center justify-center gap-6 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950/80 px-6 py-16 text-center"
-    >
-      <div class="w-full max-w-md space-y-6 rounded-3xl border border-slate-800/60 bg-slate-950/80 p-10 text-left shadow-xl">
-        <div class="space-y-2">
-          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Panel privado</p>
-          <h2 class="text-2xl font-semibold text-teal-200">Acceso al dashboard</h2>
-          <p class="text-sm text-slate-400">
-            Introduce tus credenciales internas para gestionar colecciones, contenidos y medios.
-          </p>
-        </div>
-        <form id="login-form" class="space-y-5">
-          <label class="block text-sm">
-            <span class="mb-1 block font-medium text-slate-200">Usuario</span>
-            <input
-              name="username"
-              type="text"
-              required
-              autocomplete="username"
-              class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-            />
-          </label>
-          <label class="block text-sm">
-            <span class="mb-1 block font-medium text-slate-200">Contraseña</span>
-            <input
-              name="password"
-              type="password"
-              required
-              autocomplete="current-password"
-              class="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/40"
-            />
-          </label>
-          <button
-            type="submit"
-            class="w-full rounded-xl bg-teal-400/90 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/60"
-          >
-            Entrar
-          </button>
-        </form>
-        <p
-          id="login-error"
-          class="hidden rounded-xl border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
-        ></p>
-      </div>
-    </section>
-
-    <section
       id="dashboard"
-      class="hidden h-full overflow-hidden rounded-3xl bg-slate-950/90 lg:grid lg:grid-cols-[240px_1fr]"
+      class="h-full overflow-hidden rounded-3xl bg-slate-950/90 lg:grid lg:grid-cols-[240px_1fr]"
     >
       <aside class="hidden flex-col border-r border-slate-800/80 bg-slate-950/95 px-6 py-8 lg:flex">
         <div class="flex items-center gap-3 pb-8">
