@@ -4,23 +4,61 @@ import {
   type ContentTypeDefinition,
   type MediaAsset,
 } from "../utils/strapiAdmin";
-import { ROLES, type SectionStatus } from "../utils/adminStore";
+import { ROLES, type SectionStatus, type StorageLike } from "../utils/adminStore";
 import type { SocialLink } from "../data/team";
 
-const root = document.querySelector<HTMLElement>("#admin-app");
-if (!root) {
-  console.warn("Vista de administración no encontrada");
-} else {
-  const store = createStrapiAdmin(window.localStorage);
+export interface AdminDashboardOptions {
+  storage?: StorageLike;
+  navigate?: (path: string) => void;
+  suppressRender?: boolean;
+}
+
+const getStorage = (storage?: StorageLike) => {
+  if (storage) return storage;
+  if (typeof window !== "undefined" && window.localStorage) {
+    return window.localStorage;
+  }
+  return undefined;
+};
+
+const defaultNavigate = (path: string) => {
+  if (typeof window !== "undefined") {
+    window.location.href = path;
+  }
+};
+
+const revealRoot = (root: HTMLElement | null) => {
+  if (!root) return;
+  root.dataset.authState = "ready";
+  root.classList.remove("hidden");
+  root.classList.remove("opacity-0");
+};
+
+export const setupAdminDashboard = (options: AdminDashboardOptions = {}) => {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const root = document.querySelector<HTMLElement>("#admin-app");
+  if (!root) {
+    console.warn("Vista de administración no encontrada");
+    return;
+  }
+
+  const storage = getStorage(options.storage);
+  const store = createStrapiAdmin(storage);
   const { contentTypeBuilder, contentManager, mediaLibrary, usersRolesPermissions } =
     store.modules;
 
-  const loginView = document.querySelector<HTMLElement>("#login-view");
-  const dashboard = document.querySelector<HTMLElement>("#dashboard");
-  const loginForm = document.querySelector<HTMLFormElement>("#login-form");
-  const loginError = document.querySelector<HTMLElement>("#login-error");
   const currentUserLabel = document.querySelector<HTMLElement>("#current-user");
   const logoutBtn = document.querySelector<HTMLButtonElement>("#logout-btn");
+  const navigate = options.navigate ?? defaultNavigate;
+
+  const initialState = store.getState();
+  if (!initialState.currentUserId) {
+    navigate("/admin/login");
+    return { store };
+  }
 
   const contentTypeForm = document.querySelector<HTMLFormElement>("#content-type-form");
   const contentTypeFeedback = document.querySelector<HTMLElement>("#content-type-feedback");
@@ -730,24 +768,7 @@ if (!root) {
     userForm?.reset();
   };
 
-  const afterLogin = () => {
-    setHidden(loginView, true);
-    setHidden(dashboard, false);
-    const user = usersRolesPermissions.currentUser();
-    if (currentUserLabel && user) {
-      currentUserLabel.textContent = user.username;
-    }
-    resetForms();
-    renderAll();
-    setView("content-types");
-  };
-
-  const handleLogout = () => {
-    store.logout();
-    resetForms();
-    setHidden(loginView, false);
-    setHidden(dashboard, true);
-    setMessage(loginError, "", "info");
+  const clearMessages = () => {
     setMessage(sectionFeedback, "", "info");
     setMessage(teamFeedback, "", "info");
     setMessage(eventFeedback, "", "info");
@@ -757,22 +778,14 @@ if (!root) {
     setMessage(userFeedback, "", "info");
   };
 
-  loginForm?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(loginForm);
-    const username = String(formData.get("username") ?? "").trim();
-    const password = String(formData.get("password") ?? "");
-    try {
-      store.login(username, password);
-      afterLogin();
-    } catch (error) {
-      setMessage(
-        loginError,
-        error instanceof Error ? error.message : "No se pudo iniciar sesión",
-        "error"
-      );
-    }
-  });
+  const handleLogout = () => {
+    store.logout();
+    resetForms();
+    clearMessages();
+    root.dataset.authState = "signed-out";
+    root.classList.add("opacity-0");
+    navigate("/admin/login");
+  };
 
   logoutBtn?.addEventListener("click", () => {
     handleLogout();
@@ -1235,10 +1248,22 @@ if (!root) {
     }
   });
 
-  const initialState = store.getState();
-  if (initialState.currentUserId) {
-    afterLogin();
-  } else {
-    handleLogout();
+  const currentUser = usersRolesPermissions.currentUser();
+  if (currentUserLabel && currentUser) {
+    currentUserLabel.textContent = currentUser.username;
   }
+
+  clearMessages();
+  resetForms();
+  if (!options.suppressRender) {
+    renderAll();
+  }
+  setView("content-types");
+  revealRoot(root);
+
+  return { store };
+};
+
+if (typeof window !== "undefined") {
+  setupAdminDashboard();
 }
