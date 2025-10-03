@@ -3,9 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import EventCard from '../components/EventCard.astro';
-import { events } from '../data/events';
+import { getEvents, type Event } from "../utils/strapiContent";
 
-const upcomingEvents = [...events]
+const events = await getEvents();
+const upcomingEvents: Event[] = [...events]
   .sort((a, b) => a.date.localeCompare(b.date))
   .slice(0, 3);
 ---

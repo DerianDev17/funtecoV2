@@ -10,7 +10,7 @@ export type Event = {
   tags: string[];
 };
 
-export const events: Event[] = [
+export const fallbackEvents: Event[] = [
   {
     slug: 'taller-derechos-humanos-migrantes',
     title: 'Taller de derechos humanos para mujeres en movilidad',
@@ -133,4 +133,5 @@ export const events: Event[] = [
   }
 ];
 
-export const getEventBySlug = (slug: string) => events.find((event) => event.slug === slug);
+export const getFallbackEventBySlug = (slug: string) =>
+  fallbackEvents.find((event) => event.slug === slug);

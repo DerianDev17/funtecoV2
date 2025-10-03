@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { events } from '../../data/events';
-import type { Event } from '../../data/events';
+import Footer from "../../components/Footer.astro";
+import { getEvents, type Event } from "../../utils/strapiContent";
 
 export async function getStaticPaths() {
+  const events = await getEvents();
   return events.map((event) => ({
     params: { slug: event.slug },
-    props: { event }
+    props: { event },
   }));
 }
 

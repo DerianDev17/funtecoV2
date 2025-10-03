@@ -1,6 +1,6 @@
-import teamData from './team.json';
+import teamData from "./team.json";
 
-export type SocialPlatform = 'instagram' | 'facebook' | 'linkedin' | 'twitter' | 'web';
+export type SocialPlatform = "instagram" | "facebook" | "linkedin" | "twitter" | "web";
 
 export type SocialLink = {
   platform: SocialPlatform;
@@ -21,8 +21,8 @@ export type TeamMember = {
   socials: SocialLink[];
 };
 
-export const teamMembers = teamData as TeamMember[];
+export const fallbackTeamMembers = teamData as TeamMember[];
 
-export function getTeamMemberBySlug(slug: string) {
-  return teamMembers.find((member) => member.slug === slug);
+export function getFallbackTeamMemberBySlug(slug: string) {
+  return fallbackTeamMembers.find((member) => member.slug === slug);
 }
