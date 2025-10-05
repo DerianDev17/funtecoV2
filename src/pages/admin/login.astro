@@ -1,31 +1,70 @@
 ---
 import AdminLayout from "../../layouts/AdminLayout.astro";
-import { getStrapiBaseUrl } from "../../utils/strapiClient";
-
-const strapiBaseUrl = getStrapiBaseUrl();
-const adminUrl = `${strapiBaseUrl.replace(/\/$/, "")}/admin`;
 ---
-<AdminLayout title="Acceso al panel de Strapi">
+<AdminLayout title="Acceso al panel privado">
   <div class="space-y-8 rounded-3xl border border-slate-800/70 bg-slate-950/70 p-8 shadow-xl shadow-slate-950/40">
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold text-teal-200">Inicia sesión en Strapi</h2>
+      <h2 class="text-xl font-semibold text-teal-200">Inicia sesión con tu cuenta institucional</h2>
       <p class="text-sm text-slate-300">
-        El panel personalizado se ha reemplazado por el dashboard oficial de Strapi. Dirígete a
-        <a href={adminUrl} class="font-semibold text-teal-300 underline hover:text-teal-100">{adminUrl}</a>
-        para autenticarte. Allí podrás crear tipos de contenido, gestionar entradas y administrar roles.
-      </p>
-      <p class="rounded-2xl border border-teal-500/30 bg-teal-500/5 p-4 text-xs text-teal-100">
-        Consejo: activa la opción <em>Remember me</em> del formulario de Strapi para conservar la sesión mientras desarrollas el sitio.
+        Este formulario permite que el equipo autorizado gestione contenidos, campañas y reportes internos. Ingresa tus credenciales
+        para continuar. Si olvidaste tu contraseña, solicita el restablecimiento al área de sistemas.
       </p>
     </section>
 
-    <section class="space-y-4">
-      <h3 class="text-base font-semibold text-teal-100">¿Cómo obtengo las credenciales?</h3>
-      <ul class="space-y-3 text-sm text-slate-300">
-        <li>La primera persona que accede al panel crea la cuenta administradora mediante el asistente inicial.</li>
-        <li>Desde <strong>Settings → Users</strong> puedes generar usuarios adicionales y asignarles roles.</li>
-        <li>Para conectar el frontend con la API, crea un token en <strong>Settings → API Tokens</strong> con permisos de lectura.</li>
-      </ul>
+    <form class="space-y-6" method="post" action="/admin/sessions">
+      <div class="space-y-2">
+        <label for="email" class="text-sm font-medium text-slate-200">Correo electrónico</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          autocomplete="username"
+          class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+          placeholder="persona@funteco.org"
+        />
+      </div>
+
+      <div class="space-y-2">
+        <label for="password" class="text-sm font-medium text-slate-200">Contraseña</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          autocomplete="current-password"
+          class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+          placeholder="Ingresa tu clave"
+        />
+      </div>
+
+      <div class="flex items-center justify-between text-sm text-slate-300">
+        <label class="inline-flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="remember"
+            value="true"
+            class="h-4 w-4 rounded border-slate-600 bg-slate-900 text-teal-400 focus:ring-teal-500"
+          />
+          <span>Mantener sesión iniciada</span>
+        </label>
+        <a href="mailto:fundaciontejiendoc@gmail.com" class="text-teal-300 hover:text-teal-200">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button
+        type="submit"
+        class="inline-flex w-full items-center justify-center rounded-full bg-teal-500 px-6 py-3 text-sm font-semibold text-slate-900 shadow-md transition hover:bg-teal-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300"
+      >
+        Acceder al panel
+      </button>
+    </form>
+
+    <section class="space-y-3 text-xs text-slate-400">
+      <h3 class="text-sm font-semibold text-teal-100">Soporte</h3>
+      <p>
+        El área técnica puede ayudarte a crear usuarios adicionales, activar autenticación multifactor y auditar accesos. Escríbenos a
+        <a href="mailto:fundaciontejiendoc@gmail.com" class="text-teal-300 underline hover:text-teal-200">fundaciontejiendoc@gmail.com</a>.
+      </p>
     </section>
   </div>
 </AdminLayout>

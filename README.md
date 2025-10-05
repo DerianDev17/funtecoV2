@@ -65,15 +65,13 @@ Una vez instaladas las dependencias, puedes ejecutar los siguientes comandos:
 - `pnpm preview` – Previsualiza el sitio de producción generado en `dist/`.
 - `pnpm test` – Ejecuta la suite de Vitest, incluyendo las pruebas del módulo administrativo.
 
-## Integración con Strapi
+## Gestión de contenido
 
-El proyecto ahora obtiene el contenido desde un backend de Strapi creado con la guía oficial de [Quick Start](https://docs.strapi.io/cms/quick-start). Sigue estos pasos para conectarlo:
+Los eventos y perfiles del equipo se almacenan en archivos locales dentro de `src/data`. Las utilidades de `src/utils/content.ts` exponen funciones asíncronas para recuperar la información ya normalizada y lista para usarse en las páginas de Astro. Esta aproximación elimina la dependencia de un CMS y facilita desplegar el sitio en entornos estáticos sin variables de entorno especiales.
 
-1. Genera el backend ejecutando `npx create-strapi-app@latest strapi-backend --quickstart` y crea la cuenta administradora.
-2. Configura las colecciones `events` y `team-members` según la tabla descrita en `docs/strapi-admin.md`.
-3. Crea un API Token de solo lectura y define las variables `PUBLIC_STRAPI_URL` y `STRAPI_API_TOKEN` antes de construir el sitio.
+Si necesitas actualizar la agenda o los perfiles, edita los archivos `eventsFallback.ts` y `team.json`. Cada función devuelve copias independientes de los datos para evitar mutaciones accidentales en tiempo de ejecución.
 
-Los helpers de `src/utils/strapiContent.ts` consultan las colecciones y, si la API no está disponible, recurren a los datos de respaldo existentes en `src/data`. Consulta `docs/strapi-admin.md` para ver la guía completa.
+El acceso administrativo ahora se concentra en la página `/admin/login`, que ofrece un formulario preparado para conectar con el sistema de autenticación que utilice tu organización. Puedes adaptar la acción del formulario o integrar un servicio de identidad sin modificar el resto del sitio.
 
 ## Buenas prácticas y próximos pasos
 
