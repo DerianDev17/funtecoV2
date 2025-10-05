@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from "../../components/Footer.astro";
-import { getEvents, type Event } from "../../utils/strapiContent";
+import { getEvents, type Event } from "../../utils/content";
 
 export async function getStaticPaths() {
   const events = await getEvents();

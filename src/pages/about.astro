@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import TeamGrid from "../components/TeamGrid.astro";
-import { getTeamMembers } from "../utils/strapiContent";
+import { getTeamMembers } from "../utils/content";
 
 const teamMembers = await getTeamMembers();
 ---

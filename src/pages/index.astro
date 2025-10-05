@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import EventCard from '../components/EventCard.astro';
-import { getEvents, type Event } from "../utils/strapiContent";
+import { getEvents, type Event } from "../utils/content";
 
 const events = await getEvents();
 const upcomingEvents: Event[] = [...events]

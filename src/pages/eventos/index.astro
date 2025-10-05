@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import EventCard from "../../components/EventCard.astro";
-import { getEvents } from "../../utils/strapiContent";
+import { getEvents } from "../../utils/content";
 
 const orderedEvents = (await getEvents()).sort((a, b) => a.date.localeCompare(b.date));
 ---
