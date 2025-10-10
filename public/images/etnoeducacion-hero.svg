@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">Ilustración abstracta sobre etnoeducación</title>
+  <desc id="desc">Formas orgánicas y tramas que representan territorios afrodescendientes conectados por rutas de aprendizaje.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef3f0" />
+      <stop offset="40%" stop-color="#fce8d5" />
+      <stop offset="100%" stop-color="#d8e7ff" />
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f48406" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#f4bd8d" stop-opacity="0.85" />
+    </linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2c2a6c" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#6f6ac3" stop-opacity="0.9" />
+    </linearGradient>
+    <pattern id="weave" patternUnits="userSpaceOnUse" width="60" height="60">
+      <rect width="60" height="60" fill="none" stroke="#f48406" stroke-width="2" opacity="0.3" />
+      <path d="M0 30h60M30 0v60" stroke="#2c2a6c" stroke-width="4" opacity="0.08" />
+      <circle cx="30" cy="30" r="8" fill="#f48406" opacity="0.12" />
+    </pattern>
+  </defs>
+  <rect width="1200" height="720" fill="url(#bg)" />
+  <circle cx="240" cy="160" r="110" fill="url(#sun)" opacity="0.9" />
+  <path d="M0 520 Q280 440 520 520 T1200 520 V720 H0 Z" fill="url(#wave)" opacity="0.9" />
+  <path d="M0 600 Q260 520 520 600 T1200 600 V720 H0 Z" fill="#f48406" opacity="0.22" />
+  <g opacity="0.55">
+    <path d="M220 240 C340 120 520 160 660 300" fill="none" stroke="#2c2a6c" stroke-width="6" stroke-linecap="round" />
+    <path d="M320 340 C480 240 640 300 780 440" fill="none" stroke="#27ae60" stroke-width="6" stroke-linecap="round" opacity="0.7" />
+    <path d="M460 420 C620 320 820 360 980 500" fill="none" stroke="#f48406" stroke-width="6" stroke-linecap="round" opacity="0.6" />
+  </g>
+  <g fill="#ffffff" opacity="0.9">
+    <circle cx="220" cy="240" r="34" />
+    <circle cx="460" cy="420" r="40" />
+    <circle cx="780" cy="440" r="36" />
+    <circle cx="980" cy="500" r="28" />
+  </g>
+  <g fill="#2c2a6c" font-family="'Work Sans', 'Helvetica Neue', Arial, sans-serif" font-weight="600" opacity="0.75">
+    <text x="200" y="246" font-size="22">Saberes</text>
+    <text x="438" y="426" font-size="22">Memorias</text>
+    <text x="754" y="446" font-size="22">Tecnología</text>
+    <text x="956" y="506" font-size="20">Cuidados</text>
+  </g>
+  <path d="M860 140c120 40 220 140 260 260" fill="none" stroke="#27ae60" stroke-width="12" stroke-linecap="round" opacity="0.2" />
+  <path d="M880 160c100 50 170 130 210 220" fill="none" stroke="#2c2a6c" stroke-width="6" stroke-linecap="round" opacity="0.15" />
+  <rect x="660" y="120" width="320" height="200" rx="40" fill="url(#weave)" opacity="0.75" />
+  <g fill="#2c2a6c" font-family="'Work Sans', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500">
+    <text x="692" y="176">Ruta etnoeducativa</text>
+    <text x="692" y="212" opacity="0.75">Investigación comunitaria</text>
+    <text x="692" y="244" opacity="0.75">Pedagogías afrocentradas</text>
+    <text x="692" y="276" opacity="0.75">Tecnologías con identidad</text>
+  </g>
+</svg>

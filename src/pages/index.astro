@@ -9,6 +9,27 @@ const events = await getEvents();
 const upcomingEvents: Event[] = [...events]
   .sort((a, b) => a.date.localeCompare(b.date))
   .slice(0, 3);
+
+const learningJourney = [
+  {
+    title: "Diagnóstico comunitario",
+    summary: "Escuchamos a lideresas, docentes y juventudes afro para mapear necesidades y sueños de aprendizaje.",
+    detail:
+      "Facilitamos círculos de palabra, cartografías afectivas y análisis de datos que permiten crear currículos situados.",
+  },
+  {
+    title: "Co-diseño pedagógico",
+    summary: "Prototipamos rutas formativas con metodologías críticas, arte y tecnologías apropiadas.",
+    detail:
+      "Acompañamos a los equipos educativos para que integren memoria ancestral, derechos humanos y pensamiento digital afrocentrado.",
+  },
+  {
+    title: "Evaluación con cuidado",
+    summary: "Medimos el impacto con herramientas participativas y devoluciones comunitarias.",
+    detail:
+      "Creamos indicadores de transformación cultural, bienestar y autonomía económica junto a las comunidades aliadas.",
+  },
+];
 ---
 <BaseLayout
   title="Inicio"
@@ -22,33 +43,98 @@ const upcomingEvents: Event[] = [...events]
       <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
         <div class="text-center space-y-8">
           <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
-            Movimiento afro en acción
+            Etnoeducación afrocentrada
           </span>
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-dark leading-tight">
-            Investigamos, educamos y celebramos la memoria afrodescendiente
+            Etnoeducación que transforma territorios afrodescendientes
           </h1>
           <p class="max-w-3xl mx-auto text-lg text-neutral-black/80 leading-relaxed">
-            Somos Funteco, una fundación ecuatoriana que impulsa proyectos de investigación, formación y cultura para comunidades afrodescendientes y personas en movilidad humana.
+            Somos Funteco, una fundación ecuatoriana que convierte la etnoeducación en el eje articulador de la investigación, la innovación tecnológica y las redes de cuidado para comunidades afrodescendientes y personas en movilidad humana.
           </p>
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <a href="/eventos" class="inline-flex items-center justify-center rounded-full bg-primary-dark px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-primary">
-              Explorar eventos
+            <a href="/que-hacemos" class="inline-flex items-center justify-center rounded-full bg-primary-dark px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-primary">
+              Explorar enfoque etnoeducativo
             </a>
             <a href="/about" class="inline-flex items-center justify-center rounded-full border border-primary-dark px-6 py-3 text-sm font-semibold text-primary-dark hover:bg-white/70 transition">
               Conocer la fundación
             </a>
           </div>
+          <dl class="mx-auto grid gap-6 sm:grid-cols-3 max-w-4xl pt-6">
+            <div class="rounded-2xl border border-accent-blush/50 bg-white/90 px-4 py-5 shadow-sm">
+              <dt class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark/70">Docentes acompañadas</dt>
+              <dd class="mt-3 text-2xl font-bold text-primary-dark">180+</dd>
+              <dd class="mt-1 text-xs text-neutral-black/70">Procesos de formación en currículo etnoeducativo</dd>
+            </div>
+            <div class="rounded-2xl border border-accent-blush/50 bg-white/90 px-4 py-5 shadow-sm">
+              <dt class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark/70">Laboratorios comunitarios</dt>
+              <dd class="mt-3 text-2xl font-bold text-primary-dark">26</dd>
+              <dd class="mt-1 text-xs text-neutral-black/70">Territorios conectados con tecnologías con identidad</dd>
+            </div>
+            <div class="rounded-2xl border border-accent-blush/50 bg-white/90 px-4 py-5 shadow-sm">
+              <dt class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark/70">Alianzas activas</dt>
+              <dd class="mt-3 text-2xl font-bold text-primary-dark">45</dd>
+              <dd class="mt-1 text-xs text-neutral-black/70">Redes educativas, comunitarias y de incidencia</dd>
+            </div>
+          </dl>
         </div>
         <div class="mt-16 flex justify-center">
           <div class="relative">
             <div class="absolute -inset-6 bg-gradient-to-br from-accent-flamingo/60 via-primary/40 to-primary-dark/50 blur-3xl opacity-70"></div>
             <div class="relative rounded-[3rem] border-8 border-white shadow-2xl overflow-hidden max-w-3xl">
               <img
-                src="https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/carousel-1.jpg"
-                alt="Personas afrodescendientes participando en una actividad comunitaria de Funteco"
+                src="/images/etnoeducacion-hero.svg"
+                alt="Ilustración abstracta que representa la red etnoeducativa de Funteco"
                 class="w-full object-cover"
               />
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Learning Journey section -->
+    <section class="py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-12 lg:grid-cols-[minmax(0,_1.1fr)_minmax(0,_0.9fr)] items-center">
+        <div class="space-y-6">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
+            Ruta etnoeducativa
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-bold text-primary-dark leading-tight">
+            Cómo activamos procesos de etnoeducación con comunidades afro
+          </h2>
+          <p class="text-neutral-black/80 leading-relaxed">
+            Acompañamos cada territorio desde la escucha hasta la evaluación compartida. Las siguientes etapas muestran cómo construimos experiencias de aprendizaje que honran la memoria y proyectan futuros tecnológicos propios.
+          </p>
+          <div class="grid gap-4">
+            {learningJourney.map((step, index) => (
+              <details class="group rounded-3xl border border-primary/15 bg-white/95 p-6 shadow-md transition hover:border-accent hover:shadow-lg" open={index === 0}>
+                <summary class="flex items-center justify-between gap-4 cursor-pointer list-none">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark/60">Paso {index + 1}</p>
+                    <h3 class="text-lg font-semibold text-primary-dark">{step.title}</h3>
+                  </div>
+                  <span class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary-dark transition group-open:bg-accent group-open:text-white">
+                    <svg class="h-4 w-4 group-open:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    <svg class="hidden h-4 w-4 group-open:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+                  </span>
+                </summary>
+                <div class="mt-4 space-y-3 text-sm text-neutral-black/80 leading-relaxed">
+                  <p>{step.summary}</p>
+                  <p>{step.detail}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+        <div class="relative">
+          <div class="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-primary/30 via-accent/30 to-panafrican-green/25 blur-3xl"></div>
+          <div class="relative rounded-[3rem] border border-primary/10 bg-white/95 shadow-2xl overflow-hidden">
+            <img
+              src="/images/etnoeducacion-encuentro.svg"
+              alt="Ilustración de un círculo comunitario de etnoeducación"
+              class="w-full object-cover"
+              loading="lazy"
+            />
           </div>
         </div>
       </div>
@@ -60,13 +146,13 @@ const upcomingEvents: Event[] = [...events]
         <div class="grid gap-12 lg:grid-cols-[1fr,1.2fr] items-center">
           <div class="space-y-6">
             <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
-              Nuestros ejes
+              Ejes articulados por la etnoeducación
             </span>
             <h2 class="text-3xl sm:text-4xl font-bold text-primary-dark leading-tight">
-              Tejemos conocimiento, acompañamiento y redes para la justicia racial
+              La etnoeducación es nuestro eje principal y conecta investigación, tecnología y cuidados
             </h2>
             <p class="text-neutral-black/80 leading-relaxed">
-              Diseñamos programas de investigación aplicada, educación transformadora y comunidad viva que fortalecen el liderazgo afro y la protección de los derechos humanos en Ecuador.
+              Cada programa parte de un currículo afrocentrado que reconoce los saberes territoriales y se expande hacia la investigación aplicada, la tecnología cívica y la incidencia comunitaria.
             </p>
             <a href="/about" class="inline-flex items-center gap-2 text-sm font-semibold text-primary-dark hover:underline">
               Ver nuestra historia →
@@ -77,29 +163,29 @@ const upcomingEvents: Event[] = [...events]
               <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent-flamingo/30 text-primary-dark">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M12 9v6"/><circle cx="12" cy="12" r="9"/></svg>
               </div>
-              <h3 class="text-xl font-semibold text-primary-dark mb-2">Investigación aplicada</h3>
-              <p class="text-sm text-neutral-black/70 leading-relaxed">Publicamos estudios y cartografías comunitarias que visibilizan la realidad afrodescendiente y orientan políticas públicas inclusivas.</p>
+              <h3 class="text-xl font-semibold text-primary-dark mb-2">Etnoeducación territorial</h3>
+              <p class="text-sm text-neutral-black/70 leading-relaxed">Co-creamos currículos vivos con escuelas, organizaciones y comunidades que integran memoria, identidad y tecnología.</p>
             </div>
             <div class="rounded-2xl bg-white/90 border border-accent-blush/40 p-6 shadow-md">
               <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent/20 text-primary-dark">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6H4z"/><path d="M4 14h16v6H4z"/></svg>
               </div>
-              <h3 class="text-xl font-semibold text-primary-dark mb-2">Educación transformadora</h3>
-              <p class="text-sm text-neutral-black/70 leading-relaxed">Facilitamos cursos, laboratorios y mentorías que potencian el liderazgo de mujeres, juventudes y personas en movilidad humana.</p>
+              <h3 class="text-xl font-semibold text-primary-dark mb-2">Laboratorios de innovación</h3>
+              <p class="text-sm text-neutral-black/70 leading-relaxed">Facilitamos espacios para prototipar herramientas tecnológicas, narrativas y metodologías con identidad afro.</p>
             </div>
             <div class="rounded-2xl bg-white/90 border border-accent-blush/40 p-6 shadow-md">
               <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary-dark">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M3 17h18"/></svg>
               </div>
-              <h3 class="text-xl font-semibold text-primary-dark mb-2">Comunidad viva</h3>
-              <p class="text-sm text-neutral-black/70 leading-relaxed">Sostenemos redes de cuidado, espacios culturales y ferias que celebran la memoria afro y crean oportunidades económicas solidarias.</p>
+              <h3 class="text-xl font-semibold text-primary-dark mb-2">Redes de comunidad viva</h3>
+              <p class="text-sm text-neutral-black/70 leading-relaxed">Sostenemos redes de cuidado, espacios culturales y ferias que celebran la memoria afro y generan economías solidarias.</p>
             </div>
             <div class="rounded-2xl bg-white/90 border border-accent-blush/40 p-6 shadow-md">
               <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-panafrican-green/20 text-panafrican-green">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
               </div>
               <h3 class="text-xl font-semibold text-primary-dark mb-2">Incidencia y alianzas</h3>
-              <p class="text-sm text-neutral-black/70 leading-relaxed">Articulamos organizaciones, universidades y colectivos para impulsar agendas de justicia racial y movilidad segura.</p>
+              <p class="text-sm text-neutral-black/70 leading-relaxed">Articulamos organizaciones, universidades y colectivos para convertir la etnoeducación en política pública.</p>
             </div>
           </div>
         </div>
@@ -116,7 +202,7 @@ const upcomingEvents: Event[] = [...events]
             </span>
             <h2 class="mt-4 text-3xl sm:text-4xl font-bold text-primary-dark leading-tight">Próximos eventos</h2>
             <p class="mt-3 text-neutral-black/80 max-w-2xl">
-              Participa en talleres, foros y festivales que combinan saberes ancestrales con innovación social para transformar nuestras comunidades.
+              Participa en talleres, foros y festivales etnoeducativos que combinan saberes ancestrales con innovación social para transformar nuestras comunidades.
             </p>
           </div>
           <a href="/eventos" class="inline-flex items-center justify-center rounded-full border border-primary-dark px-6 py-3 text-sm font-semibold text-primary-dark hover:bg-accent-flamingo/20 transition">
@@ -135,9 +221,9 @@ const upcomingEvents: Event[] = [...events]
     <section class="py-20">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div class="rounded-3xl bg-gradient-to-r from-primary-dark via-primary to-accent px-8 py-12 shadow-2xl text-white">
-          <h2 class="text-3xl sm:text-4xl font-bold mb-4">Únete a la red Funteco</h2>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">Únete a la red etnoeducativa de Funteco</h2>
           <p class="mb-8 text-white/80">
-            Súmate como aliada, voluntario o donante para impulsar investigaciones, programas educativos y celebraciones culturales que reafirman la identidad afro.
+            Súmate como aliada, voluntario o donante para impulsar investigaciones, programas educativos y celebraciones culturales que reafirman la identidad afro y abren caminos tecnológicos propios.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="/contacto" class="inline-flex items-center justify-center rounded-full bg-white text-primary-dark px-6 py-3 text-sm font-semibold shadow-md hover:bg-neutral transition">
