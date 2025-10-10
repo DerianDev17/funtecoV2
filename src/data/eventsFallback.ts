@@ -22,7 +22,7 @@ export const fallbackEvents: Event[] = [
     ],
     date: '2025-05-18',
     formattedDate: '18 de mayo de 2025',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/13.jpg',
+    image: '/images/13.jpg',
     location: 'Casa de la Cultura Ecuatoriana, Quito',
     tags: ['formación', 'derechos humanos']
   },
@@ -37,7 +37,7 @@ export const fallbackEvents: Event[] = [
     ],
     date: '2025-10-02',
     formattedDate: '2 de octubre de 2025',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/14.jpg',
+    image: '/images/14.jpg',
     location: 'Universidad Andina Simón Bolívar, Quito',
     tags: ['investigación', 'política pública']
   },
@@ -52,7 +52,7 @@ export const fallbackEvents: Event[] = [
     ],
     date: '2025-12-12',
     formattedDate: '12 de diciembre de 2025',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/15.jpeg',
+    image: '/images/15.jpeg',
     location: 'Malecón 2000, Guayaquil',
     tags: ['cultura', 'comunidad']
   },
@@ -67,7 +67,7 @@ export const fallbackEvents: Event[] = [
     ],
     date: '2026-01-20',
     formattedDate: '20 de enero de 2026',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/16.jpg',
+    image: '/images/16.jpg',
     location: 'Centro Cultural Metropolitano, Quito',
     tags: ['identidad', 'memoria']
   },
@@ -82,7 +82,7 @@ export const fallbackEvents: Event[] = [
     ],
     date: '2026-03-15',
     formattedDate: '15 de marzo de 2026',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/courses-1.jpg',
+    image: '/images/funteco4.png',
     location: 'Centro de Innovación Social, Esmeraldas',
     tags: ['liderazgo', 'juventudes']
   },
@@ -97,7 +97,7 @@ export const fallbackEvents: Event[] = [
     ],
     date: '2026-05-08',
     formattedDate: '8 de mayo de 2026',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/12.jpg',
+    image: '/images/funteco5.png',
     location: 'Centro Cultural de Ibarra, Ibarra',
     tags: ['género', 'justicia racial']
   },
@@ -112,7 +112,7 @@ export const fallbackEvents: Event[] = [
     ],
     date: '2026-07-24',
     formattedDate: '24 de julio de 2026',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/14.jpg',
+    image: '/images/306949967_462749855876866_8219731164686257448_n.jpg',
     location: 'Parque La Carolina, Quito',
     tags: ['emprendimiento', 'economía solidaria']
   },
@@ -127,7 +127,7 @@ export const fallbackEvents: Event[] = [
     ],
     date: '2026-11-19',
     formattedDate: '19 de noviembre de 2026',
-    image: 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/15.jpeg',
+    image: '/images/zyro-image.png',
     location: 'Teatro Sánchez Aguilar, Samborondón',
     tags: ['música', 'juventudes']
   }
