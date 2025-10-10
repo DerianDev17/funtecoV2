@@ -74,7 +74,13 @@ Una vez instaladas las dependencias, puedes ejecutar los siguientes comandos:
 - `pnpm dev` – Inicia el servidor de desarrollo en `http://localhost:3000` con recarga en caliente.
 - `pnpm build` – Genera una versión estática optimizada en la carpeta `dist/` lista para desplegar en Vercel, Netlify u otro hosting estático.
 - `pnpm preview` – Previsualiza el sitio de producción generado en `dist/`.
-- `pnpm test` – Ejecuta la suite de Vitest, incluyendo las pruebas del módulo administrativo.
+- `pnpm test` – Ejecuta la suite de Vitest para validar componentes de contenido y diseño clave.
+
+## Despliegue estático en Netlify
+
+El proyecto se construye ahora como un sitio estático puro, sin rutas protegidas ni funciones de servidor. Puedes publicar el contenido en Netlify generando la carpeta `dist/` con `pnpm build` y apuntando la carpeta publicada de tu sitio a ese directorio.
+
+Si prefieres usar la CLI de Netlify, mantén la sesión iniciada con `pnpm netlify login` y luego ejecuta `pnpm deploy` (o `pnpm deploy:prod` para producción) después de compilar.
 
 ## Gestión de contenido
 
@@ -87,8 +93,6 @@ El archivo `src/data/whatWeDo.json` concentra el relato etnoeducativo y ahora de
 Todas las ilustraciones SVG y recursos compartidos se encuentran en `public/images`. La plantilla base (`src/layouts/BaseLayout.astro`) toma la imagen de OpenGraph desde esta carpeta para evitar dependencias remotas y mejorar la seguridad del despliegue.
 
 Si necesitas actualizar la agenda, los perfiles o describir nuevos programas, edita los archivos `eventsFallback.ts`, `team.json` y `whatWeDo.json`. Cada función devuelve copias independientes de los datos para evitar mutaciones accidentales en tiempo de ejecución.
-
-El acceso administrativo ahora se concentra en la página `/admin/login`, que ofrece un formulario preparado para conectar con el sistema de autenticación que utilice tu organización. Puedes adaptar la acción del formulario o integrar un servicio de identidad sin modificar el resto del sitio.
 
 ## Buenas prácticas y próximos pasos
 
