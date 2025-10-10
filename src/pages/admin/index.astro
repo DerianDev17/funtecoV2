@@ -1,0 +1,46 @@
+---
+export const prerender = false;
+
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { defaultTeamContentManager } from "../../utils/admin/team-manager";
+import { getSession, SESSION_COOKIE_NAME } from "../../utils/admin/auth";
+
+const sessionToken = Astro.cookies.get(SESSION_COOKIE_NAME)?.value ?? "";
+const session = sessionToken ? getSession(sessionToken) : undefined;
+
+if (!session) {
+  return Astro.redirect("/admin/login");
+}
+
+const teamMembers = defaultTeamContentManager.list();
+---
+<AdminLayout title="Panel privado de FunTeco">
+  <section class="space-y-4">
+    <h2 class="text-2xl font-semibold text-teal-200">Bienvenida/o, {session.email}</h2>
+    <p class="max-w-2xl text-sm text-slate-300">
+      Desde este módulo podrás gestionar el contenido destacado del sitio. Comenzamos con la
+      administración del equipo, donde podrás agregar, editar o quitar integrantes para mantener la
+      información actualizada.
+    </p>
+  </section>
+
+  <section class="mt-8 space-y-6">
+    <div>
+      <h3 class="text-lg font-semibold text-teal-100">Equipo publicado actualmente</h3>
+      <p class="text-sm text-slate-400">
+        Estos datos provienen del nuevo manejador de contenido y pronto podrán modificarse desde la
+        interfaz.
+      </p>
+    </div>
+
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {teamMembers.map((member) => (
+        <li class="rounded-2xl border border-slate-800/70 bg-slate-900/60 p-4" key={member.slug}>
+          <h4 class="text-base font-semibold text-teal-200">{member.name}</h4>
+          <p class="text-sm text-slate-400">{member.role}</p>
+          <p class="mt-2 text-xs text-slate-500">{member.focus}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+---

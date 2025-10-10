@@ -1,5 +1,8 @@
 ---
 import AdminLayout from "../../layouts/AdminLayout.astro";
+
+const url = new URL(Astro.request.url);
+const hasError = url.searchParams.get("error") === "credentials";
 ---
 <AdminLayout title="Acceso al panel privado">
   <div class="space-y-8 rounded-3xl border border-slate-800/70 bg-slate-950/70 p-8 shadow-xl shadow-slate-950/40">
@@ -10,6 +13,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
         para continuar. Si olvidaste tu contraseña, solicita el restablecimiento al área de sistemas.
       </p>
     </section>
+
+    {hasError && (
+      <p role="alert" class="rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
+        No pudimos validar tus credenciales. Verifica el correo y la contraseña e intenta nuevamente.
+      </p>
+    )}
 
     <form class="space-y-6" method="post" action="/admin/sessions">
       <div class="space-y-2">
