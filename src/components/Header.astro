@@ -28,6 +28,18 @@ const { current = '/' } = Astro.props;
       </li>
       <li>
         <a
+          href="/que-hacemos"
+          class={`pb-1 transition-colors duration-200 ${
+            current === '/que-hacemos'
+              ? 'text-primary-dark border-b-2 border-accent-flamingo'
+              : 'hover:text-primary-dark'
+          }`}
+        >
+          Qué hacemos
+        </a>
+      </li>
+      <li>
+        <a
           href="/eventos"
           class={`pb-1 transition-colors duration-200 ${
             current === '/eventos' ? 'text-primary-dark border-b-2 border-accent-flamingo' : 'hover:text-primary-dark'
@@ -63,6 +75,7 @@ const { current = '/' } = Astro.props;
   <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 bg-white/90 backdrop-blur">
     <a href="/" class={`block py-2 border-b border-accent-blush ${current === '/' ? 'text-primary-dark font-semibold' : ''}`} aria-current={current === '/' ? 'page' : undefined}>Inicio</a>
     <a href="/about" class={`block py-2 border-b border-accent-blush ${current === '/about' ? 'text-primary-dark font-semibold' : ''}`} aria-current={current === '/about' ? 'page' : undefined}>Nosotras</a>
+    <a href="/que-hacemos" class={`block py-2 border-b border-accent-blush ${current === '/que-hacemos' ? 'text-primary-dark font-semibold' : ''}`} aria-current={current === '/que-hacemos' ? 'page' : undefined}>Qué hacemos</a>
     <a href="/eventos" class={`block py-2 border-b border-accent-blush ${current === '/eventos' ? 'text-primary-dark font-semibold' : ''}`} aria-current={current === '/eventos' ? 'page' : undefined}>Eventos</a>
     <a href="/contacto" class={`block py-2 ${current === '/contacto' ? 'text-primary-dark font-semibold' : ''}`} aria-current={current === '/contacto' ? 'page' : undefined}>Contacto</a>
   </div>

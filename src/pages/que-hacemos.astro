@@ -1,0 +1,145 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { getWhatWeDoContent, type WhatWeDoContent } from "../utils/content";
+
+const content: WhatWeDoContent = await getWhatWeDoContent();
+const pageTitle = "¿Qué hacemos";
+const description =
+  "Explora los programas, la etnoeducación y las alianzas que impulsa Funteco para transformar los territorios afro";
+---
+<BaseLayout title={pageTitle} description={description} canonical="https://www.fundaciontejiendoconocimiento.com/que-hacemos">
+  <Header current="/que-hacemos" />
+  <main class="bg-gradient-to-br from-neutral via-white to-accent-blush/20">
+    <section class="relative overflow-hidden py-20">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(244,140,6,0.12),_transparent_60%)]"></div>
+      <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <span class="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
+          {content.hero.badge}
+          <span class="inline-flex h-2 w-2 rounded-full bg-panafrican-red animate-pulse" aria-hidden="true"></span>
+        </span>
+        <div class="mt-8 grid gap-10 lg:grid-cols-[minmax(0,_1.2fr)_minmax(0,_0.8fr)] items-start">
+          <div class="space-y-6">
+            <h1 class="text-4xl sm:text-5xl font-bold text-primary-dark leading-tight">
+              {content.hero.title}
+            </h1>
+            <p class="text-lg text-neutral-black/80 leading-relaxed">
+              {content.hero.description}
+            </p>
+            <div class="rounded-3xl border border-accent-blush/40 bg-white/90 p-6 shadow-lg text-sm text-neutral-black/80">
+              {content.hero.callout}
+            </div>
+          </div>
+          <div class="grid gap-4">
+            {content.approach.values.map((value) => (
+              <div class="rounded-3xl border border-primary/10 bg-gradient-to-br from-white via-white to-accent-blush/40 p-6 shadow-md">
+                <h2 class="text-base font-semibold uppercase tracking-[0.3em] text-primary-dark/80">
+                  {value.title}
+                </h2>
+                <p class="mt-3 text-sm text-neutral-black/80 leading-relaxed">
+                  {value.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl space-y-4">
+          <h2 class="text-3xl font-semibold text-primary-dark">{content.approach.title}</h2>
+          {content.approach.paragraphs.map((paragraph) => (
+            <p class="text-base text-neutral-black/80 leading-relaxed">{paragraph}</p>
+          ))}
+        </div>
+        <div class="mt-14 grid gap-8 md:grid-cols-3">
+          {content.focusAreas.map((area) => (
+            <article class="group relative overflow-hidden rounded-3xl border border-primary/10 bg-white/95 p-8 shadow-lg transition hover:-translate-y-1 hover:shadow-xl">
+              <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-accent to-panafrican-green" aria-hidden="true"></div>
+              <h3 class="text-xl font-semibold text-primary-dark">{area.title}</h3>
+              <p class="mt-4 text-sm text-neutral-black/80 leading-relaxed">{area.description}</p>
+              <p class="mt-6 text-sm font-semibold text-accent">{area.emphasis}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="relative bg-gradient-to-br from-primary-dark via-primary to-accent text-white py-20">
+      <div class="absolute inset-x-6 inset-y-0 rounded-3xl border border-white/20"></div>
+      <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-12 lg:grid-cols-[minmax(0,_1fr)_minmax(0,_1.2fr)] items-center">
+        <div class="space-y-6">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em]">
+            Etnoeducación
+          </span>
+          <h2 class="text-3xl font-semibold leading-snug">{content.etnoeducation.title}</h2>
+          <p class="text-base text-white/85 leading-relaxed">{content.etnoeducation.description}</p>
+          <blockquote class="rounded-3xl border border-white/20 bg-white/10 p-6 text-sm italic leading-relaxed">
+            “{content.etnoeducation.quote.text}”
+            <footer class="mt-4 not-italic text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
+              {content.etnoeducation.quote.author} · {content.etnoeducation.quote.role}
+            </footer>
+          </blockquote>
+        </div>
+        <div class="grid gap-6">
+          {content.etnoeducation.initiatives.map((initiative) => (
+            <div class="rounded-3xl border border-white/20 bg-white/10 p-6 shadow-lg">
+              <h3 class="text-lg font-semibold">{initiative.name}</h3>
+              <p class="mt-3 text-sm text-white/85 leading-relaxed">{initiative.impact}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto space-y-4">
+          <span class="inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark shadow-sm">
+            Programas
+          </span>
+          <h2 class="text-3xl font-semibold text-primary-dark">Conoce nuestras líneas de trabajo</h2>
+          <p class="text-base text-neutral-black/75">
+            Cada programa se diseña con metodologías participativas y resultados medibles que fortalecen las redes afro.
+          </p>
+        </div>
+        <div class="mt-14 grid gap-8 md:grid-cols-3">
+          {content.programs.map((program) => (
+            <article class="flex h-full flex-col rounded-3xl border border-primary/15 bg-white/95 p-8 shadow-lg">
+              <div>
+                <h3 class="text-xl font-semibold text-primary-dark">{program.name}</h3>
+                <p class="mt-3 text-sm text-neutral-black/70">{program.audience}</p>
+                <p class="mt-4 text-sm text-neutral-black/80 leading-relaxed">{program.focus}</p>
+              </div>
+              <ul class="mt-6 space-y-3 text-sm text-neutral-black/80">
+                {program.outcomes.map((outcome) => (
+                  <li class="flex items-start gap-3">
+                    <span class="mt-1 inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                    <span>{outcome}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-24">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <h2 class="text-3xl font-semibold text-primary-dark">{content.cta.title}</h2>
+        <p class="text-base text-neutral-black/80 leading-relaxed">{content.cta.description}</p>
+        <a
+          href={content.cta.buttonUrl}
+          class="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-accent"
+        >
+          {content.cta.buttonLabel}
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

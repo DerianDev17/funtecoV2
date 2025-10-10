@@ -28,9 +28,17 @@ funteco_astro/
 │   ├── pages/
 │   │   ├── index.astro       # Página de inicio (hero, ejes, eventos, CTA)
 │   │   ├── about.astro       # Misión y visión
+│   │   ├── que-hacemos.astro # Programas, etnoeducación y líneas de acción
 │   │   ├── eventos.astro     # Listado de eventos
 │   │   └── contacto.astro    # Información de contacto y formulario
+│   ├── data/
+│   │   ├── eventsFallback.ts # Datos base para eventos
+│   │   ├── team.json         # Perfiles del equipo
+│   │   ├── team.ts           # Tipos y utilidades para el equipo
+│   │   ├── whatWeDo.json     # Contenido editable para "¿Qué hacemos?"
+│   │   └── whatWeDo.ts       # Tipos y fallback del contenido "¿Qué hacemos?"
 │   └── tests/
+│       ├── content.test.ts   # Pruebas del helper de contenido y copias seguras
 │       └── design.test.js    # Pruebas básicas de diseño
 └── README.md
 ```
@@ -67,9 +75,9 @@ Una vez instaladas las dependencias, puedes ejecutar los siguientes comandos:
 
 ## Gestión de contenido
 
-Los eventos y perfiles del equipo se almacenan en archivos locales dentro de `src/data`. Las utilidades de `src/utils/content.ts` exponen funciones asíncronas para recuperar la información ya normalizada y lista para usarse en las páginas de Astro. Esta aproximación elimina la dependencia de un CMS y facilita desplegar el sitio en entornos estáticos sin variables de entorno especiales.
+Los eventos, los perfiles del equipo y el contenido de la página **¿Qué hacemos?** se almacenan en archivos locales dentro de `src/data`. Las utilidades de `src/utils/content.ts` exponen funciones asíncronas para recuperar la información ya normalizada y lista para usarse en las páginas de Astro. Esta aproximación elimina la dependencia de un CMS y facilita desplegar el sitio en entornos estáticos sin variables de entorno especiales.
 
-Si necesitas actualizar la agenda o los perfiles, edita los archivos `eventsFallback.ts` y `team.json`. Cada función devuelve copias independientes de los datos para evitar mutaciones accidentales en tiempo de ejecución.
+Si necesitas actualizar la agenda, los perfiles o describir nuevos programas, edita los archivos `eventsFallback.ts`, `team.json` y `whatWeDo.json`. Cada función devuelve copias independientes de los datos para evitar mutaciones accidentales en tiempo de ejecución.
 
 El acceso administrativo ahora se concentra en la página `/admin/login`, que ofrece un formulario preparado para conectar con el sistema de autenticación que utilice tu organización. Puedes adaptar la acción del formulario o integrar un servicio de identidad sin modificar el resto del sitio.
 
