@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+  <title id="title">Ilustración de Francia Jenny Moreno</title>
+  <desc id="desc">Retrato vectorial de una mujer afro con elementos de planificación y mapas territoriales.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e3e8ff" />
+      <stop offset="100%" stop-color="#fff1e6" />
+    </linearGradient>
+  </defs>
+  <rect width="320" height="320" rx="48" fill="url(#bg)" />
+  <circle cx="160" cy="118" r="72" fill="#2c2a6c" opacity="0.16" />
+  <path d="M68 252c40-48 76-72 92-72s52 24 92 72" fill="#c9d1ff" opacity="0.35" />
+  <circle cx="160" cy="130" r="68" fill="#2c2a6c" />
+  <path d="M118 138c6 28 20 46 42 46s36-18 42-46c-8-38-24-54-42-54s-34 16-42 54z" fill="#f9c6a9" />
+  <path d="M118 132c10-22 24-32 42-32s32 10 42 32c-6-30-24-48-42-48s-36 18-42 48z" fill="#2c2a6c" />
+  <circle cx="136" cy="154" r="8" fill="#2c2a6c" />
+  <circle cx="184" cy="154" r="8" fill="#2c2a6c" />
+  <path d="M140 182c6 8 14 12 20 12s14-4 20-12" fill="none" stroke="#6f6ac3" stroke-width="4" stroke-linecap="round" />
+  <g fill="#6f6ac3" opacity="0.45">
+    <rect x="96" y="214" width="128" height="36" rx="12" />
+    <path d="M110 232h20" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <circle cx="208" cy="232" r="10" fill="#ffffff" />
+  </g>
+  <g fill="none" stroke="#27ae60" stroke-width="4" opacity="0.4" stroke-linecap="round">
+    <path d="M60 110c30 10 50 26 70 46" />
+    <path d="M260 110c-30 10-50 26-70 46" />
+  </g>
+</svg>

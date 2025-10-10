@@ -2,14 +2,15 @@
   "hero": {
     "badge": "Programas vivos",
     "title": "¿Qué hacemos en Funteco?",
-    "description": "Conectamos investigación, etnoeducación y acción comunitaria para garantizar derechos y bienestar en los territorios afroecuatorianos.",
-    "callout": "Cada proyecto nace del diálogo con lideresas, juventudes y sabedoras que sostienen redes de cuidado." 
+    "description": "Conectamos investigación, etnoeducación y acción comunitaria para garantizar derechos y bienestar en los territorios afroecuatorianos. Nuestro eje pedagógico honra las memorias ancestrales y potencia habilidades tecnológicas para el presente.",
+    "callout": "Cada proyecto nace del diálogo con lideresas, juventudes y sabedoras que sostienen redes de cuidado. Documentamos el proceso para que pueda replicarse en otros territorios afrodescendientes."
   },
   "approach": {
     "title": "Nuestra forma de tejer cambios",
     "paragraphs": [
       "Acompañamos procesos que defienden la vida digna, la memoria y la autonomía de los pueblos afrodescendientes.",
-      "Creemos en el poder de la colaboración radical. Trabajamos junto a organizaciones barriales, instituciones educativas y colectivos culturales para amplificar sus agendas." 
+      "Creemos en el poder de la colaboración radical. Trabajamos junto a organizaciones barriales, instituciones educativas y colectivos culturales para amplificar sus agendas.",
+      "La etnoeducación es nuestro eje principal: de ella se desprenden los proyectos de investigación aplicada, las redes tecnológicas y las estrategias de incidencia con las que transformamos políticas públicas."
     ],
     "values": [
       {
@@ -22,7 +23,11 @@
       },
       {
         "title": "Incidencia creativa",
-        "description": "Diseñamos campañas culturales y prototipos tecnológicos para transformar políticas públicas." 
+        "description": "Diseñamos campañas culturales y prototipos tecnológicos para transformar políticas públicas."
+      },
+      {
+        "title": "Aprendizaje continuo",
+        "description": "Evaluamos cada ciclo formativo con herramientas participativas y devoluciones comunitarias."
       }
     ]
   },
@@ -45,7 +50,7 @@
   ],
   "etnoeducation": {
     "title": "Etnoeducación que se siente y se aprende",
-    "description": "La etnoeducación es el corazón de nuestra propuesta pedagógica: un proceso para reconocer la historia afro, sanar violencias y construir futuros tecnológicos propios.",
+      "description": "La etnoeducación es el corazón de nuestra propuesta pedagógica: un proceso para reconocer la historia afro, sanar violencias y construir futuros tecnológicos propios. Vinculamos saberes ancestrales con metodologías STEAM, justicia racial y derechos digitales.",
     "initiatives": [
       {
         "name": "Escuela itinerante de saberes",
@@ -57,7 +62,7 @@
       },
       {
         "name": "Plataforma digital etnoeducativa",
-        "impact": "Un repositorio abierto de guías, podcasts y experiencias de aula creadas junto a comunidades afrodescendientes." 
+        "impact": "Un repositorio abierto de guías, podcasts y experiencias de aula creadas junto a comunidades afrodescendientes, con licencias libres y estándares de accesibilidad."
       }
     ],
     "quote": {

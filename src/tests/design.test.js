@@ -3,12 +3,12 @@ import { describe, it, expect } from 'vitest';
 import { JSDOM } from 'jsdom';
 
 describe('Diseño de páginas', () => {
-  it('La página de inicio contiene el mensaje del hero', () => {
-    const html = `<!DOCTYPE html><html><body><h1>Impulsando el progreso a través de la investigación y la educación</h1></body></html>`;
+  it('La página de inicio contiene el mensaje etnoeducativo del hero', () => {
+    const html = `<!DOCTYPE html><html><body><h1>Etnoeducación que transforma territorios afrodescendientes</h1></body></html>`;
     const dom = new JSDOM(html);
     const heading = dom.window.document.querySelector('h1');
     expect(heading).not.toBeNull();
-    expect(heading.textContent?.toUpperCase()).toContain('IMPULSANDO');
+    expect(heading.textContent?.toUpperCase()).toContain('ETNOEDUCACIÓN');
   });
   it('La navegación incluye enlaces principales', () => {
     const navHtml = `<!DOCTYPE html><html><body><nav><a href="/">Inicio</a><a href="/about">Nosotras</a><a href="/que-hacemos">Qué hacemos</a><a href="/eventos">Eventos</a><a href="/contacto">Contacto</a></nav></body></html>`;
@@ -19,5 +19,12 @@ describe('Diseño de páginas', () => {
     expect(links).toContain('Qué hacemos');
     expect(links).toContain('Eventos');
     expect(links).toContain('Contacto');
+  });
+  it('La ruta etnoeducativa se presenta como un acordeón interactivo', () => {
+    const html = `<!DOCTYPE html><html><body><section><details open><summary>Paso 1</summary><p>Diagnóstico comunitario</p></details></section></body></html>`;
+    const dom = new JSDOM(html);
+    const details = dom.window.document.querySelector('details');
+    expect(details).not.toBeNull();
+    expect(details?.getAttribute('open')).not.toBeNull();
   });
 });

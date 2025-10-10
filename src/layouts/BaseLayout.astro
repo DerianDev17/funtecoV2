@@ -6,7 +6,8 @@ const {
 } = Astro.props;
 
 const seoTitle = title ? `${title} | Funteco` : 'Funteco';
-const ogImage = 'https://raw.githubusercontent.com/DerianDev17/Funteco/main/img/13.jpg';
+const ogImagePath = '/images/og-funteco.svg';
+const ogImage = Astro.site ? new URL(ogImagePath, Astro.site).href : ogImagePath;
 ---
 <!DOCTYPE html>
 <html lang="es">
