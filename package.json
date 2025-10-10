@@ -6,7 +6,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "vitest"
+    "test": "vitest",
+    "deploy": "netlify deploy",
+    "deploy:prod": "netlify deploy --prod"
   },
   "dependencies": {
     "@astrojs/tailwind": "^6.0.2",
@@ -18,6 +20,7 @@
   "devDependencies": {
     "@testing-library/dom": "^9.3.0",
     "jsdom": "^23.0.0",
+    "netlify-cli": "^23.9.1",
     "vitest": "^0.34.1"
   }
 }
