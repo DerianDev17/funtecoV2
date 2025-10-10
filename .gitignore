@@ -16,3 +16,5 @@ Thumbs.db
 
 # Archivos específicos de editores o IDEs
 .vscode/
+# Local Netlify folder
+.netlify
