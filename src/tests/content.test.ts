@@ -6,7 +6,9 @@ import {
   getEvents,
   getTeamMemberBySlug,
   getTeamMembers,
+  getWhatWeDoContent,
 } from "../utils/content";
+import { fallbackWhatWeDoContent } from "../data/whatWeDo";
 
 describe("content helpers", () => {
   it("devuelve copias independientes de los eventos", async () => {
@@ -53,5 +55,14 @@ describe("content helpers", () => {
     const member = await getTeamMemberBySlug(target.slug);
     expect(member).toEqual(target);
     expect(member).not.toBe(target);
+  });
+
+  it("devuelve contenido editable para la página ¿Qué hacemos?", async () => {
+    const content = await getWhatWeDoContent();
+    expect(content).toEqual(fallbackWhatWeDoContent);
+    expect(content).not.toBe(fallbackWhatWeDoContent);
+    expect(content.etnoeducation.title.toLowerCase()).toContain("etnoeducación".toLowerCase());
+    content.programs[0]?.outcomes.push("nuevo resultado");
+    expect(fallbackWhatWeDoContent.programs[0]?.outcomes).not.toContain("nuevo resultado");
   });
 });

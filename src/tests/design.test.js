@@ -11,11 +11,12 @@ describe('Diseño de páginas', () => {
     expect(heading.textContent?.toUpperCase()).toContain('IMPULSANDO');
   });
   it('La navegación incluye enlaces principales', () => {
-    const navHtml = `<!DOCTYPE html><html><body><nav><a href="/">Inicio</a><a href="/about">Nosotras</a><a href="/eventos">Eventos</a><a href="/contacto">Contacto</a></nav></body></html>`;
+    const navHtml = `<!DOCTYPE html><html><body><nav><a href="/">Inicio</a><a href="/about">Nosotras</a><a href="/que-hacemos">Qué hacemos</a><a href="/eventos">Eventos</a><a href="/contacto">Contacto</a></nav></body></html>`;
     const dom = new JSDOM(navHtml);
     const links = Array.from(dom.window.document.querySelectorAll('nav a')).map(el => el.textContent);
     expect(links).toContain('Inicio');
     expect(links).toContain('Nosotras');
+    expect(links).toContain('Qué hacemos');
     expect(links).toContain('Eventos');
     expect(links).toContain('Contacto');
   });

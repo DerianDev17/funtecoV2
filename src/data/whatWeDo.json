@@ -1,0 +1,107 @@
+{
+  "hero": {
+    "badge": "Programas vivos",
+    "title": "¿Qué hacemos en Funteco?",
+    "description": "Conectamos investigación, etnoeducación y acción comunitaria para garantizar derechos y bienestar en los territorios afroecuatorianos.",
+    "callout": "Cada proyecto nace del diálogo con lideresas, juventudes y sabedoras que sostienen redes de cuidado." 
+  },
+  "approach": {
+    "title": "Nuestra forma de tejer cambios",
+    "paragraphs": [
+      "Acompañamos procesos que defienden la vida digna, la memoria y la autonomía de los pueblos afrodescendientes.",
+      "Creemos en el poder de la colaboración radical. Trabajamos junto a organizaciones barriales, instituciones educativas y colectivos culturales para amplificar sus agendas." 
+    ],
+    "values": [
+      {
+        "title": "Investigación situada",
+        "description": "Generamos datos, relatos y mapas que visibilizan desigualdades y oportunidades desde las voces afro." 
+      },
+      {
+        "title": "Cuidado colectivo",
+        "description": "Acompañamos procesos psicosociales y económicos que fortalecen la autonomía de las mujeres y familias." 
+      },
+      {
+        "title": "Incidencia creativa",
+        "description": "Diseñamos campañas culturales y prototipos tecnológicos para transformar políticas públicas." 
+      }
+    ]
+  },
+  "focusAreas": [
+    {
+      "title": "Etnoeducación viva",
+      "description": "Integrar saberes ancestrales y metodologías críticas en escuelas, comunidades y espacios digitales.",
+      "emphasis": "Acompañamos a docentes y liderazgos juveniles para crear currículos con perspectiva afro." 
+    },
+    {
+      "title": "Economías solidarias",
+      "description": "Impulsamos emprendimientos liderados por mujeres afro que generan ingresos y redes de apoyo.",
+      "emphasis": "Mentorías, acceso a mercados y laboratorios de innovación financiera comunitaria." 
+    },
+    {
+      "title": "Justicia racial y movilidad",
+      "description": "Defendemos los derechos de personas afro en movilidad humana y promovemos políticas antirracistas.",
+      "emphasis": "Formaciones legales, campañas comunicacionales y articulación con redes de protección." 
+    }
+  ],
+  "etnoeducation": {
+    "title": "Etnoeducación que se siente y se aprende",
+    "description": "La etnoeducación es el corazón de nuestra propuesta pedagógica: un proceso para reconocer la historia afro, sanar violencias y construir futuros tecnológicos propios.",
+    "initiatives": [
+      {
+        "name": "Escuela itinerante de saberes",
+        "impact": "Laboratorios móviles que recorren territorios con recursos didácticos, bibliotecas vivas y talleres de arte y tecnología." 
+      },
+      {
+        "name": "Residencias docentes",
+        "impact": "Acompañamiento a maestras y maestros para transformar currículos, evaluar aprendizajes y crear materiales con enfoque afro." 
+      },
+      {
+        "name": "Plataforma digital etnoeducativa",
+        "impact": "Un repositorio abierto de guías, podcasts y experiencias de aula creadas junto a comunidades afrodescendientes." 
+      }
+    ],
+    "quote": {
+      "text": "La etnoeducación nos permite nombrarnos desde la dignidad y proyectar futuros en donde las niñas afro lideran la innovación.",
+      "author": "Lina Morales",
+      "role": "Coordinadora pedagógica de Funteco" 
+    }
+  },
+  "programs": [
+    {
+      "name": "Laboratorio de innovación comunitaria",
+      "audience": "Juventudes afro entre 16 y 25 años",
+      "focus": "Prototipado de soluciones tecnológicas y artísticas para problemas territoriales",
+      "outcomes": [
+        "Proyectos acompañados por mentoras tecnológicas",
+        "Fondos semilla para iniciativas seleccionadas",
+        "Red de pares y aliadas regionales"
+      ]
+    },
+    {
+      "name": "Rutas de cuidado y protección",
+      "audience": "Mujeres migrantes y refugiadas",
+      "focus": "Fortalecimiento jurídico, psicosocial y económico para mujeres en movilidad",
+      "outcomes": [
+        "Mapeo de servicios seguros",
+        "Clínicas legales itinerantes",
+        "Bolsas solidarias y economías comunitarias"
+      ]
+    },
+    {
+      "name": "Escuela de narrativas afro",
+      "audience": "Comunicadoras, artistas y activistas",
+      "focus": "Producción de contenidos multimedia antirracistas",
+      "outcomes": [
+        "Mentorías en storytelling y podcast",
+        "Equipos portátiles compartidos",
+        "Alianzas con medios comprometidos"
+      ]
+    }
+  ],
+  "cta": {
+    "title": "¿Quieres activar un programa en tu territorio?",
+    "description": "Diseñamos procesos a la medida junto a organizaciones, escuelas y gobiernos locales. Hagamos equipo para que la justicia racial sea política pública y vida cotidiana.",
+    "buttonLabel": "Escríbenos",
+    "buttonUrl": "/contacto"
+  }
+}
